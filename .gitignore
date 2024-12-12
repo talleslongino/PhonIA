@@ -1,0 +1,19 @@
+# Windows
+Thumbs.db
+ehthumbs.db
+[Dd]esktop.ini
+*.lnk
+
+# Compactados
+*.zip
+*.rar
+*.7z
+
+# Python
+.pytest_cache
+__pycache__
+*.pyc
+venv/
+.idea
+pyprote/view.py
+testes/

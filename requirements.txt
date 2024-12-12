@@ -1,0 +1,7 @@
+fastapi 
+uvicorn 
+praat-parselmouth
+pydantic
+python-multipart
+scipy
+matplotlib
