@@ -1,6 +1,6 @@
 # --- adapters/web.py ---
 from fastapi import FastAPI, UploadFile, HTTPException
-from fastapi.responses import JSONResponse, HTMLResponse
+from fastapi.responses import JSONResponse, HTMLResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 import os
 from application.services import AudioAnalysisService
@@ -39,6 +39,13 @@ async def analyze_audio(file: UploadFile):
         # Clean up
         if os.path.exists(file_path):
             os.remove(file_path)
+
+@app.get("/fft-plot")
+def get_fft_plot():
+    plot_path = "fft_plot.png"
+    if not os.path.exists(plot_path):
+        raise HTTPException(status_code=404, detail="FFT plot not found")
+    return FileResponse(plot_path)
 
 @app.get("/")
 def serve_frontend():

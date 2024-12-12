@@ -5,7 +5,7 @@ import sqlite3
 class AudioAnalysisService:
     def __init__(self, analyzer: AudioAnalyzer):
         self.analyzer = analyzer
-        self.db_path = "analysis_history.db"
+        self.db_path = "db.db"
         self._initialize_database()
 
     def _initialize_database(self):
