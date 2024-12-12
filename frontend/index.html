@@ -3,16 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Audio Analysis</title>
+    <title>PhonoIA - Análise de Voz</title>
     <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
-    <h1>Audio Analysis Tool</h1>
+    <header>
+        <img src="/static/assets/logo.png" alt="Logotipo" class="logo">
+        <img src="/static/assets/phonoIA_logo.png" alt="Logotipo" class="logo">
+    </header>
+    <form id="subtitulo-form">
+        <div id="subtitulo">Ferramenta para Detectar Patologias na Voz</div>
+    </form>
     <form id="upload-form">
         <input type="file" id="audio-file" accept=".wav" required />
-        <button type="submit">Analyze</button>
+        <button type="submit">Analisar</button>
     </form>
-    <div id="result"></div>
+    <div id="result">Aguarde enquanto processamos o arquivo...</div>
     <img id="fft-plot" src="/fft-plot" alt="FFT Plot" style="display:none; margin-top: 20px;">
     <script src="/static/app.js"></script>
 </body>

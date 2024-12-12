@@ -3,6 +3,7 @@ from pydantic import BaseModel
 import parselmouth
 import numpy as np
 from scipy.fft import fft, fftfreq
+import matplotlib.pyplot as plt
 
 
 class AudioAnalysisResult(BaseModel):

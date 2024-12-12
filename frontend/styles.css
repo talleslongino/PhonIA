@@ -4,6 +4,18 @@ body {
     margin: 20px;
 }
 
+header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.logo {
+    height: 80px; /* Ajuste conforme necessário */
+    margin-right: 15px;
+}
+
 form {
     margin-bottom: 20px;
 }
