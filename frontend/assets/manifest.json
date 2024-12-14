@@ -1,0 +1,21 @@
+{
+  "name": "Ferramenta de Detectar Patologias na Voz - PhonIA",
+  "short_name": "PhonIA",
+  "description": "Uma ferramenta que faz análise de áudio analisando parâmetros como jitter, shimmer e FFT do sinal de áudio bem como a aplicação de IA para detecção de patologias na voz.",
+  "icons": [
+    {
+      "src": "/static/assets/logo-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/static/assets/logo-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "http://127.0.0.1:8000",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#000000"
+}
