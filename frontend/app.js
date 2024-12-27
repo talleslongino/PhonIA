@@ -1,16 +1,5 @@
-if ("serviceWorker" in navigator) {
-    window.addEventListener("load", () => {
-        navigator.serviceWorker.register("/static/service-worker.js")
-            .then((registration) => {
-                console.log("Service Worker registered with scope:", registration.scope);
-            })
-            .catch((error) => {
-                console.error("Service Worker registration failed:", error);
-            });
-    });
-}
-
-// Lógica para enviar o arquivo de áudio e exibir o progresso
+//# --- frontend/app.js ---
+// Lógica para enviar o arquivo de áudio e exibir os resultados diretamente
 const form = document.getElementById("upload-form");
 const resultDiv = document.getElementById("result");
 const fftPlot = document.getElementById("fft-plot");
@@ -25,40 +14,24 @@ form.addEventListener("submit", async (e) => {
     const formData = new FormData();
     formData.append("file", file);
 
-    // Inicia a análise e obtém o ID da tarefa
-    let response = await fetch("/start-analysis", {
-        method: "POST",
-        body: formData,
-    });
+    // Envia o arquivo para análise e exibe os resultados
+    try {
+        const response = await fetch("/start-analysis", {
+            method: "POST",
+            body: formData,
+        });
 
-    if (response.ok) {
-        const data = await response.json();
-        const taskId = data.task_id;
-        await checkTaskStatus(taskId);
-    } else {
-        const error = await response.json();
-        resultDiv.innerHTML = `<p>Error: ${error.detail}</p>`;
+        if (response.ok) {
+            const data = await response.json();
+            resultDiv.innerHTML = `<p>Jitter: ${data.jitter}</p>
+                                   <p>Shimmer: ${data.shimmer}</p>
+                                   <p>Fundamental Frequency: ${data.fundamental_frequency}</p>`;
+            fftPlot.style.display = "block";
+        } else {
+            const error = await response.json();
+            resultDiv.innerHTML = `<p>Error: ${error.detail}</p>`;
+        }
+    } catch (error) {
+        resultDiv.innerHTML = `<p>Error: ${error.message}</p>`;
     }
 });
-
-// Função para verificar o status da tarefa
-async function checkTaskStatus(taskId) {
-    while (true) {
-        const response = await fetch(`/task-status/${taskId}`);
-        const data = await response.json();
-
-        if (data.status === "completed") {
-            resultDiv.innerHTML = `<p>Jitter: ${data.result.jitter}</p>
-                                   <p>Shimmer: ${data.result.shimmer}</p>
-                                   <p>Fundamental Frequency: ${data.result.fundamental_frequency}</p>`;
-            fftPlot.style.display = "block";
-            break;
-        } else if (data.status === "failed") {
-            resultDiv.innerHTML = `<p>Error: ${data.error}</p>`;
-            break;
-        }
-
-        // Espera antes de verificar novamente
-        await new Promise(resolve => setTimeout(resolve, 1000));
-    }
-}

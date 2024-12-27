@@ -1,3 +1,4 @@
+//# --- frontend/service-worker.js ---
 const CACHE_NAME = "audio-tool-cache-v1";
 const urlsToCache = [
     "/",

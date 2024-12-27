@@ -18,3 +18,4 @@ venv/
 .idea
 pyprote/view.py
 testes/
+.vercel
