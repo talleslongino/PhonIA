@@ -1,5 +1,5 @@
 # --- adapters/web.py ---
-from fastapi import FastAPI, UploadFile, HTTPException, Request
+from fastapi import FastAPI, UploadFile, HTTPException, Request, File
 from fastapi.responses import JSONResponse, HTMLResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
@@ -32,6 +32,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 @app.get("/service-worker.js", response_class=FileResponse)
 async def get_service_worker():
     return FileResponse("frontend/service-worker.js", media_type="application/javascript")
@@ -57,6 +58,7 @@ async def start_analysis(file: UploadFile):
         if os.path.exists(file_path):
             os.remove(file_path)
 
+
 @app.get("/fft-plot")
 def get_fft_plot():
     plot_path = "fft_plot.png"
@@ -64,30 +66,42 @@ def get_fft_plot():
         raise HTTPException(status_code=404, detail="FFT plot not found")
     return FileResponse(plot_path)
 
+
+@app.post("/upload-audio/")
+async def upload_audio(file: UploadFile):
+    with open(f"uploaded_audio/{file.filename}", "wb") as audio_file:
+        audio_file.write(await file.read())
+    return {"filename": file.filename}
+
 # @app.get("/")
 # def serve_frontend():
 #     with open("frontend/index.html") as f:
 #         return HTMLResponse(content=f.read(), status_code=200)
+
 
 # Home Page
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
     return templates.TemplateResponse("home.html", {"request": request})
 
+
 # Página 1
 @app.get("/page1", response_class=HTMLResponse)
 async def page1(request: Request):
     return templates.TemplateResponse("page1.html", {"request": request})
+
 
 # Página 2
 @app.get("/page2", response_class=HTMLResponse)
 async def page2(request: Request):
     return templates.TemplateResponse("page2.html", {"request": request})
 
+
 # Página 3
 @app.get("/page3", response_class=HTMLResponse)
 async def page3(request: Request):
     return templates.TemplateResponse("page3.html", {"request": request})
+
 
 # Página 4
 @app.get("/page4", response_class=HTMLResponse)

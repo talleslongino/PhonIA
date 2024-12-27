@@ -1,6 +1,116 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2>Pag 2 - Gravar áudio</h2>
-<p>This is the content of Page 2.</p>
+<div class="audio-editor">
+    <h2>Pag 2 - Gravar áudio</h2>
+    <div class="controls">
+        <button id="recordButton">Start Recording</button>
+        <button id="stopButton" disabled>Stop Recording</button>
+    </div>
+    <div id="waveform" style="margin-top: 20px;"></div>
+    <div class="audio-controls">
+        <button id="playButton" disabled>Play Preview</button>
+        <button id="cutButton" disabled>Cut and Preview</button>
+    </div>
+</div>
+
+<style>
+    .audio-editor {
+        text-align: center;
+        margin-top: 20px;
+    }
+    .controls, .audio-controls {
+        margin: 20px;
+    }
+    #waveform {
+        border: 1px solid #ccc;
+        height: 150px;
+        width: 100%;
+        margin: auto;
+    }
+</style>
+
+<script src="https://unpkg.com/wavesurfer.js"></script>
+<script>
+    let audioContext;
+    let mediaRecorder;
+    let audioChunks = [];
+    let wavesurfer;
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const recordButton = document.getElementById("recordButton");
+        const stopButton = document.getElementById("stopButton");
+        const playButton = document.getElementById("playButton");
+        const cutButton = document.getElementById("cutButton");
+        const waveformContainer = document.getElementById("waveform");
+
+        // Initialize WaveSurfer
+        wavesurfer = WaveSurfer.create({
+            container: waveformContainer,
+            waveColor: "violet",
+            progressColor: "purple",
+            cursorColor: "navy",
+            height: 150,
+            responsive: true,
+        });
+
+        // Start Recording
+        recordButton.addEventListener("click", async () => {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            mediaRecorder = new MediaRecorder(stream);
+
+            mediaRecorder.ondataavailable = (event) => {
+                if (event.data.size > 0) {
+                    audioChunks.push(event.data);
+                }
+            };
+
+            mediaRecorder.onstop = async () => {
+                const blob = new Blob(audioChunks, { type: "audio/webm" });
+                audioChunks = [];
+                const arrayBuffer = await blob.arrayBuffer();
+                const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+
+                // Load audio into WaveSurfer
+                wavesurfer.loadBlob(blob);
+
+                playButton.disabled = false;
+                cutButton.disabled = false;
+            };
+
+            mediaRecorder.start();
+            recordButton.disabled = true;
+            stopButton.disabled = false;
+        });
+
+        // Stop Recording
+        stopButton.addEventListener("click", () => {
+            mediaRecorder.stop();
+            recordButton.disabled = false;
+            stopButton.disabled = true;
+        });
+
+        // Play Preview
+        playButton.addEventListener("click", () => {
+            wavesurfer.playPause();
+        });
+
+        // Cut and Preview
+        cutButton.addEventListener("click", () => {
+            const region = wavesurfer.addRegion({
+                start: wavesurfer.getCurrentTime(),
+                end: wavesurfer.getDuration(),
+                color: "rgba(0, 123, 255, 0.4)",
+            });
+
+            region.on("update-end", () => {
+                const start = region.start;
+                const end = region.end;
+
+                wavesurfer.play(start, end);
+            });
+        });
+    });
+</script>
 {% endblock %}
