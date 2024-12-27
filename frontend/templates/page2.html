@@ -8,9 +8,18 @@
         <button id="stopButton" disabled>Stop Recording</button>
     </div>
     <div id="waveform" style="margin-top: 20px;"></div>
+    <div class="sliders">
+        <label for="startSlider">Start Time:</label>
+        <input type="range" id="startSlider" min="0" step="0.1" value="0">
+        <span id="startValue">0.0</span> seconds
+        <br>
+        <label for="endSlider">End Time:</label>
+        <input type="range" id="endSlider" min="0" step="0.1" value="0">
+        <span id="endValue">0.0</span> seconds
+    </div>
     <div class="audio-controls">
         <button id="playButton" disabled>Play Preview</button>
-        <button id="cutButton" disabled>Cut and Preview</button>
+        <button id="cutButton" disabled>Apply Cut</button>
     </div>
 </div>
 
@@ -19,7 +28,7 @@
         text-align: center;
         margin-top: 20px;
     }
-    .controls, .audio-controls {
+    .controls, .sliders, .audio-controls {
         margin: 20px;
     }
     #waveform {
@@ -28,89 +37,133 @@
         width: 100%;
         margin: auto;
     }
+    .sliders input {
+        width: 60%;
+    }
 </style>
 
 <script src="https://unpkg.com/wavesurfer.js"></script>
 <script>
     let audioContext;
-    let mediaRecorder;
-    let audioChunks = [];
-    let wavesurfer;
+let mediaRecorder;
+let audioChunks = [];
+let wavesurfer;
+let mediaStream; // Variável para armazenar o stream de áudio
 
-    document.addEventListener("DOMContentLoaded", () => {
-        const recordButton = document.getElementById("recordButton");
-        const stopButton = document.getElementById("stopButton");
-        const playButton = document.getElementById("playButton");
-        const cutButton = document.getElementById("cutButton");
-        const waveformContainer = document.getElementById("waveform");
+document.addEventListener("DOMContentLoaded", () => {
+    const recordButton = document.getElementById("recordButton");
+    const stopButton = document.getElementById("stopButton");
+    const playButton = document.getElementById("playButton");
+    const cutButton = document.getElementById("cutButton");
+    const waveformContainer = document.getElementById("waveform");
+    const startSlider = document.getElementById("startSlider");
+    const endSlider = document.getElementById("endSlider");
+    const startValue = document.getElementById("startValue");
+    const endValue = document.getElementById("endValue");
 
-        // Initialize WaveSurfer
-        wavesurfer = WaveSurfer.create({
-            container: waveformContainer,
-            waveColor: "violet",
-            progressColor: "purple",
-            cursorColor: "navy",
-            height: 150,
-            responsive: true,
-        });
+    // Initialize WaveSurfer
+    wavesurfer = WaveSurfer.create({
+        container: waveformContainer,
+        waveColor: "violet",
+        progressColor: "purple",
+        cursorColor: "navy",
+        height: 150,
+        responsive: true,
+    });
 
-        // Start Recording
-        recordButton.addEventListener("click", async () => {
-            audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            mediaRecorder = new MediaRecorder(stream);
+    // Start Recording
+    recordButton.addEventListener("click", async () => {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true }); // Obter stream
+        mediaRecorder = new MediaRecorder(mediaStream);
 
-            mediaRecorder.ondataavailable = (event) => {
-                if (event.data.size > 0) {
-                    audioChunks.push(event.data);
-                }
-            };
+        mediaRecorder.ondataavailable = (event) => {
+            if (event.data.size > 0) {
+                audioChunks.push(event.data);
+            }
+        };
 
-            mediaRecorder.onstop = async () => {
-                const blob = new Blob(audioChunks, { type: "audio/webm" });
-                audioChunks = [];
-                const arrayBuffer = await blob.arrayBuffer();
-                const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+        mediaRecorder.onstop = async () => {
+            const blob = new Blob(audioChunks, { type: "audio/webm" });
+            audioChunks = [];
+            const arrayBuffer = await blob.arrayBuffer();
+            const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
 
-                // Load audio into WaveSurfer
-                wavesurfer.loadBlob(blob);
+            // Load audio into WaveSurfer
+            wavesurfer.loadBlob(blob);
 
-                playButton.disabled = false;
-                cutButton.disabled = false;
-            };
+            wavesurfer.on("ready", () => {
+                duration = wavesurfer.getDuration();
+                startSlider.max = duration;
+                endSlider.max = duration;
+                endSlider.value = duration;
+                startValue.textContent = "0.0";
+                endValue.textContent = duration.toFixed(1);
+            });
 
-            mediaRecorder.start();
-            recordButton.disabled = true;
-            stopButton.disabled = false;
-        });
+            playButton.disabled = false;
+            cutButton.disabled = false;
+        };
 
-        // Stop Recording
-        stopButton.addEventListener("click", () => {
-            mediaRecorder.stop();
-            recordButton.disabled = false;
-            stopButton.disabled = true;
-        });
+        mediaRecorder.start();
+        recordButton.disabled = true;
+        stopButton.disabled = false;
+    });
 
-        // Play Preview
-        playButton.addEventListener("click", () => {
-            wavesurfer.playPause();
-        });
+    // Stop Recording
+    stopButton.addEventListener("click", () => {
+        if (mediaRecorder && mediaRecorder.state !== "inactive") {
+            mediaRecorder.stop(); // Parar a gravação
+        }
 
-        // Cut and Preview
-        cutButton.addEventListener("click", () => {
-            const region = wavesurfer.addRegion({
-                start: wavesurfer.getCurrentTime(),
-                end: wavesurfer.getDuration(),
+        if (mediaStream) {
+            // Interromper o uso do microfone
+            mediaStream.getTracks().forEach(track => track.stop());
+            mediaStream = null;
+        }
+
+        recordButton.disabled = false;
+        stopButton.disabled = true;
+    });
+
+    // Update sliders and preview
+    startSlider.addEventListener("input", () => {
+        startValue.textContent = parseFloat(startSlider.value).toFixed(1);
+        if (parseFloat(startSlider.value) >= parseFloat(endSlider.value)) {
+            startSlider.value = endSlider.value - 0.1;
+            startValue.textContent = parseFloat(startSlider.value).toFixed(1);
+        }
+    });
+
+    endSlider.addEventListener("input", () => {
+        endValue.textContent = parseFloat(endSlider.value).toFixed(1);
+        if (parseFloat(endSlider.value) <= parseFloat(startSlider.value)) {
+            endSlider.value = parseFloat(startSlider.value) + 0.1;
+            endValue.textContent = parseFloat(endSlider.value).toFixed(1);
+        }
+    });
+
+    // Play Preview
+    playButton.addEventListener("click", () => {
+        const start = parseFloat(startSlider.value);
+        const end = parseFloat(endSlider.value);
+        wavesurfer.play(start, end);
+    });
+
+    // Apply Cut
+    cutButton.addEventListener("click", () => {
+        const start = parseFloat(startSlider.value);
+        const end = parseFloat(endSlider.value);
+
+        if (start >= 0 && end <= duration && start < end) {
+            wavesurfer.addRegion({
+                start,
+                end,
                 color: "rgba(0, 123, 255, 0.4)",
             });
-
-            region.on("update-end", () => {
-                const start = region.start;
-                const end = region.end;
-
-                wavesurfer.play(start, end);
-            });
-        });
+            alert(`Audio cut applied from ${start.toFixed(1)}s to ${end.toFixed(1)}s.`);
+        }
     });
+});
 </script>
 {% endblock %}
