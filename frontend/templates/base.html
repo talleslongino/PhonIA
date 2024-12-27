@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PhonIA</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <meta charset="UTF-8">
+    <header>
+        <img src="/static/assets/logo.png" alt="Logotipo" class="logo">
+        <img src="/static/assets/phonIA_logo.png" alt="Logotipo" class="logo">
+        <nav>
+            <a href="/">Home</a> |
+            <a href="/page1">Pag 1</a> |
+            <a href="/page2">Pag 2</a> |
+            <a href="/page3">Pag 3</a> |
+            <a href="/page4">Pag 4</a>
+        </nav>
+    </header>
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+    <footer>
+        <p>&copy; 2024 PhonIA WebApp</p>
+    </footer>
+</body>
+<link rel="manifest" href="/static/assets/manifest.json">
+</html>

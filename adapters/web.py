@@ -1,12 +1,16 @@
 # --- adapters/web.py ---
-from fastapi import FastAPI, UploadFile, HTTPException
+from fastapi import FastAPI, UploadFile, HTTPException, Request
 from fastapi.responses import JSONResponse, HTMLResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from application.services import AudioAnalysisService
 from domain.audio_analysis import AudioAnalyzer
+from fastapi.templating import Jinja2Templates
 import os
 
+
+# Configurando os templates
+templates = Jinja2Templates(directory="frontend/templates")
 
 UPLOAD_DIR = "uploads"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
@@ -60,7 +64,32 @@ def get_fft_plot():
         raise HTTPException(status_code=404, detail="FFT plot not found")
     return FileResponse(plot_path)
 
-@app.get("/")
-def serve_frontend():
-    with open("frontend/index.html") as f:
-        return HTMLResponse(content=f.read(), status_code=200)
+# @app.get("/")
+# def serve_frontend():
+#     with open("frontend/index.html") as f:
+#         return HTMLResponse(content=f.read(), status_code=200)
+
+# Home Page
+@app.get("/", response_class=HTMLResponse)
+async def home(request: Request):
+    return templates.TemplateResponse("home.html", {"request": request})
+
+# Página 1
+@app.get("/page1", response_class=HTMLResponse)
+async def page1(request: Request):
+    return templates.TemplateResponse("page1.html", {"request": request})
+
+# Página 2
+@app.get("/page2", response_class=HTMLResponse)
+async def page2(request: Request):
+    return templates.TemplateResponse("page2.html", {"request": request})
+
+# Página 3
+@app.get("/page3", response_class=HTMLResponse)
+async def page3(request: Request):
+    return templates.TemplateResponse("page3.html", {"request": request})
+
+# Página 4
+@app.get("/page4", response_class=HTMLResponse)
+async def page4(request: Request):
+    return templates.TemplateResponse("page4.html", {"request": request})

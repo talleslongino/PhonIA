@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Pag 1 - Carregar áudio</h2>
+<p>Importe o áudio para realizar análise. (somente .wav)</p>
+
+<form id="upload-form">
+        <input type="file" id="audio-file" accept=".wav" required />
+        <button type="submit">Analisar</button>
+    </form>
+    <div id="result">Aguarde enquanto processamos o arquivo...</div>
+    <img id="fft-plot" src="/fft-plot" alt="FFT Plot" style="display:none; margin-top: 20px;">
+    <script src="/static/app.js"></script>
+</body>
+{% endblock %}
