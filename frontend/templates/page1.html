@@ -1,15 +1,247 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2>Pag 1 - Carregar áudio</h2>
-<p>Importe o áudio para realizar análise. (somente .wav)</p>
+<script src="https://unpkg.com/wavesurfer.js@5.2.0"></script>
+<script src="https://unpkg.com/wavesurfer.js@5.2.0/dist/plugin/wavesurfer.regions.min.js"></script>
+
+<h2>Pag 1 - Carregar e Editar Áudio</h2>
+<p>Importe o áudio para realizar análise e edição. (somente .wav)</p>
 
 <form id="upload-form">
-        <input type="file" id="audio-file" accept=".wav" required />
-        <button type="submit">Analisar</button>
-    </form>
-    <div id="result">Aguarde enquanto processamos o arquivo...</div>
-    <img id="fft-plot" src="/fft-plot" alt="FFT Plot" style="display:none; margin-top: 20px;">
-    <script src="/static/app.js"></script>
-</body>
+    <input type="file" id="audio-file" accept=".wav" required />
+    <button type="submit">Analisar</button>
+</form>
+
+<div id="result">Aguarde enquanto processamos o arquivo...</div>
+<img id="fft-plot" src="/fft-plot" alt="FFT Plot" style="display:none; margin-top: 20px;">
+
+<div class="audio-editor">
+    <h2>Editor de Áudio</h2>
+    <div id="waveform" style="margin-top: 20px;"></div>
+    <div id="statusMessage" style="margin-top: 20px; color: green;"></div>
+    <div class="audio-controls">
+        <button id="playRegionButton" disabled>Ouvir Áudio</button>
+        <button id="cutButton" disabled>Cortar</button>
+    </div>
+</div>
+
+<style>
+    /* Botão padrão */
+    button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 120px;
+        height: 40px;
+        border: none;
+        border-radius: 20px;
+        background-color: gray;
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+        position: relative;
+        margin: 0 10px;
+    }
+
+    button:disabled {
+        background-color: lightgray;
+        cursor: not-allowed;
+    }
+
+    /* Botão Play */
+    #playRegionButton::before {
+        content: "▶";
+        font-size: 16px;
+        margin-right: 8px;
+    }
+
+    /* Botão de Aplicar Corte */
+    #cutButton::before {
+        content: "✂";
+        font-size: 16px;
+        margin-right: 8px;
+    }
+
+    .audio-editor {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .controls, .audio-controls {
+        margin: 20px;
+    }
+
+    #waveform {
+        border: 1px solid #ccc;
+        height: 150px;
+        width: 100%;
+        margin: auto;
+    }
+</style>
+
+<script>
+    let wavesurfer;
+    let region = null;
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const audioFileInput = document.getElementById("audio-file");
+        const uploadForm = document.getElementById("upload-form");
+        const resultDiv = document.getElementById("result");
+        const fftPlot = document.getElementById("fft-plot");
+        const playRegionButton = document.getElementById("playRegionButton");
+        const cutButton = document.getElementById("cutButton");
+        const waveformContainer = document.getElementById("waveform");
+
+        // Inicializar WaveSurfer com o plugin Regions
+        wavesurfer = WaveSurfer.create({
+            container: waveformContainer,
+            waveColor: "blue",
+            progressColor: "purple",
+            cursorColor: "navy",
+            height: 150,
+            responsive: true,
+            plugins: [WaveSurfer.regions.create()]
+        });
+
+        // Submeter formulário de upload
+        uploadForm.addEventListener("submit", (e) => {
+            e.preventDefault();
+
+            const file = audioFileInput.files[0];
+            if (!file) {
+                alert("Por favor, selecione um arquivo .wav.");
+                return;
+            }
+
+            resultDiv.textContent = "Processando o arquivo...";
+            fftPlot.style.display = "none";
+
+            // Carregar áudio no WaveSurfer
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                wavesurfer.load(event.target.result);
+
+                wavesurfer.on("ready", () => {
+                    resultDiv.textContent = "Arquivo carregado e pronto para edição.";
+                    playRegionButton.disabled = false;
+                    cutButton.disabled = false;
+
+                    // Criar uma região inicial para edição
+                    region = wavesurfer.addRegion({
+                        start: 0,
+                        end: Math.min(5, wavesurfer.getDuration()),
+                        color: "rgba(0, 255, 0, 0.3)"
+                    });
+                });
+            };
+
+            reader.readAsDataURL(file);
+
+            // Simular análise de FFT (imagem)
+            setTimeout(() => {
+                fftPlot.src = "/fft-plot?file=" + encodeURIComponent(file.name);
+                fftPlot.style.display = "block";
+            }, 2000); // Simula tempo de processamento
+        });
+
+        // Reproduzir região
+        playRegionButton.addEventListener("click", () => {
+            if (region) {
+                wavesurfer.play(region.start, region.end);
+            } else {
+                alert("Nenhuma região selecionada.");
+            }
+        });
+
+        // Cortar áudio
+        cutButton.addEventListener("click", async () => {
+            if (!region) {
+                alert("Por favor, selecione uma região para cortar.");
+                return;
+            }
+
+            const originalBuffer = wavesurfer.backend.buffer;
+            const startSample = Math.floor(region.start * originalBuffer.sampleRate);
+            const endSample = Math.floor(region.end * originalBuffer.sampleRate);
+            const cutSamples = endSample - startSample;
+
+            if (cutSamples <= 0) {
+                alert("Região inválida. Certifique-se de que a região está corretamente definida.");
+                return;
+            }
+
+            const newBuffer = wavesurfer.backend.ac.createBuffer(
+                originalBuffer.numberOfChannels,
+                cutSamples,
+                originalBuffer.sampleRate
+            );
+
+            for (let channel = 0; channel < originalBuffer.numberOfChannels; channel++) {
+                const channelData = originalBuffer.getChannelData(channel);
+                newBuffer.copyToChannel(channelData.subarray(startSample, endSample), channel);
+            }
+
+            exportAudioBuffer(newBuffer);
+        });
+
+        async function exportAudioBuffer(audioBuffer) {
+            const offlineContext = new OfflineAudioContext(
+                audioBuffer.numberOfChannels,
+                audioBuffer.length,
+                audioBuffer.sampleRate
+            );
+
+            const source = offlineContext.createBufferSource();
+            source.buffer = audioBuffer;
+            source.connect(offlineContext.destination);
+            source.start();
+
+            const renderedBuffer = await offlineContext.startRendering();
+            const wavBlob = bufferToWave(renderedBuffer);
+
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(wavBlob);
+            link.download = "cut_audio.wav";
+            link.click();
+        }
+
+        function bufferToWave(buffer) {
+            const numChannels = buffer.numberOfChannels;
+            const length = buffer.length * numChannels * 2 + 44;
+            const result = new ArrayBuffer(length);
+            const view = new DataView(result);
+
+            writeUTFBytes(view, 0, "RIFF");
+            view.setUint32(4, length - 8, true);
+            writeUTFBytes(view, 8, "WAVE");
+            writeUTFBytes(view, 12, "fmt ");
+            view.setUint32(16, 16, true);
+            view.setUint16(20, 1, true);
+            view.setUint16(22, numChannels, true);
+            view.setUint32(24, buffer.sampleRate, true);
+            view.setUint32(28, buffer.sampleRate * 4, true);
+            view.setUint16(32, numChannels * 2, true);
+            view.setUint16(34, 16, true);
+            writeUTFBytes(view, 36, "data");
+            view.setUint32(40, length - 44, true);
+
+            let offset = 44;
+            for (let i = 0; i < buffer.length; i++) {
+                for (let channel = 0; channel < numChannels; channel++) {
+                    const sample = buffer.getChannelData(channel)[i];
+                    const value = Math.max(-1, Math.min(1, sample)) * 32767;
+                    view.setInt16(offset, value, true);
+                    offset += 2;
+                }
+            }
+            return new Blob([view], { type: "audio/wav" });
+        }
+
+        function writeUTFBytes(view, offset, string) {
+            for (let i = 0; i < string.length; i++) {
+                view.setUint8(offset + i, string.charCodeAt(i));
+            }
+        }
+    });
+</script>
 {% endblock %}
