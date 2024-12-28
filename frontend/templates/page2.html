@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 
 {% block content %}
-<!-- Importar WaveSurfer.js e o plugin Regions -->
 <script src="https://unpkg.com/wavesurfer.js@5.2.0"></script>
 <script src="https://unpkg.com/wavesurfer.js@5.2.0/dist/plugin/wavesurfer.regions.min.js"></script>
+
 <div class="audio-editor">
     <h2>Pag 2 - Gravar áudio</h2>
     <div class="controls">
@@ -40,7 +40,6 @@
     let audioChunks = [];
     let wavesurfer;
     let mediaStream;
-    let duration = 0;
     let region = null;
 
     document.addEventListener("DOMContentLoaded", () => {
@@ -49,7 +48,6 @@
         const playRegionButton = document.getElementById("playRegionButton");
         const cutButton = document.getElementById("cutButton");
         const waveformContainer = document.getElementById("waveform");
-        const statusMessage = document.getElementById("statusMessage");
 
         // Inicializar WaveSurfer com o plugin Regions
         wavesurfer = WaveSurfer.create({
@@ -59,77 +57,49 @@
             cursorColor: "navy",
             height: 150,
             responsive: true,
-            plugins: [
-                WaveSurfer.regions.create()
-            ]
+            plugins: [WaveSurfer.regions.create()]
         });
 
-        // Iniciar gravação
+        // Gravar áudio
         recordButton.addEventListener("click", async () => {
-            audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            navigator.mediaDevices.getUserMedia({ audio: true })
-            .then(stream => console.log("Microphone access granted"))
-            .catch(error => console.error("Microphone access denied:", error));
-            mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            mediaRecorder = new MediaRecorder(mediaStream, { mimeType: "audio/webm" });
+            try {
+                mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorder = new MediaRecorder(mediaStream, { mimeType: "audio/webm" });
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
-            mediaRecorder.ondataavailable = (event) => {
-                if (event.data.size > 0) {
-                    audioChunks.push(event.data);
-                }
-                console.log("Chunk size:", event.data.size);
-            };
-
-            mediaRecorder.onstop = async () => {
-                const blob = new Blob(audioChunks, { type: "audio/webm" });
-                console.log("Final blob size:", blob.size);
-
-                if (blob.size === 0) {
-                    alert("Audio recording failed. Please try again.");
-                    return;
+                mediaRecorder.ondataavailable = (event) => {
+                    if (event.data.size > 0) {
+                        audioChunks.push(event.data);
                     }
+                };
 
-                audioChunks = [];
-                const arrayBuffer = await blob.arrayBuffer();
-                const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+                mediaRecorder.onstop = async () => {
+                    const blob = new Blob(audioChunks, { type: "audio/webm" });
+                    audioChunks = [];
+                    const arrayBuffer = await blob.arrayBuffer();
+                    const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
 
-                console.log("Audio buffer byte length:", arrayBuffer.byteLength);
-                if (arrayBuffer.byteLength === 0) {
-                    //alert("ArrayBuffer is empty. Check the recording process.");
-                    return;
-                    }
+                    wavesurfer.loadBlob(blob);
 
-                // Carregar áudio no WaveSurfer
-                wavesurfer.loadBlob(blob);
+                    wavesurfer.on("ready", () => {
+                        cutButton.disabled = false;
+                        playRegionButton.disabled = false;
 
-                // Mostrar mensagem quando a forma de onda estiver pronta
-                wavesurfer.on("ready", () => {
-                    duration = wavesurfer.getDuration();
-                    cutButton.disabled = false;
-                    playRegionButton.disabled = false;
-
-                    const backendBuffer = wavesurfer.backend.buffer;
-                    if (!backendBuffer) {
-                        console.error("WaveSurfer backend buffer is empty.");
-                        return;
-                    }
-
-                    console.log("Buffer Sample Rate:", backendBuffer.sampleRate);
-                    console.log("Buffer Duration:", backendBuffer.duration);
-                    console.log("Number of Channels:", backendBuffer.numberOfChannels);
-
-                    // Adicionar região inicial
-                    region = wavesurfer.addRegion({
-                        start: 0,
-                        end: Math.min(5, duration), // Por padrão, primeiros 5 segundos
-                        color: "rgba(0, 255, 0, 0.3)"
+                        region = wavesurfer.addRegion({
+                            start: 0.1,
+                            end: Math.min(5, wavesurfer.getDuration() - 0.1),
+                            color: "rgba(0, 255, 0, 0.3)"
+                        });
                     });
-                });
-            };
+                };
 
-            mediaRecorder.start();
-            recordButton.disabled = true;
-            stopButton.disabled = false;
+                mediaRecorder.start();
+                recordButton.disabled = true;
+                stopButton.disabled = false;
+            } catch (error) {
+                console.error("Error accessing microphone:", error);
+                alert("Microphone access denied. Please allow microphone access.");
+            }
         });
 
         // Parar gravação
@@ -137,7 +107,6 @@
             if (mediaRecorder && mediaRecorder.state !== "inactive") {
                 mediaRecorder.stop();
             }
-
             if (mediaStream) {
                 mediaStream.getTracks().forEach(track => track.stop());
                 mediaStream = null;
@@ -147,7 +116,7 @@
             stopButton.disabled = true;
         });
 
-        // Ouvir região
+        // Reproduzir região selecionada
         playRegionButton.addEventListener("click", () => {
             if (region) {
                 wavesurfer.play(region.start, region.end);
@@ -156,7 +125,7 @@
             }
         });
 
-        // Aplicar corte
+        // Cortar e exportar região
         cutButton.addEventListener("click", async () => {
             if (!region) {
                 alert("Please select a region to cut.");
@@ -164,93 +133,87 @@
             }
 
             const originalBuffer = wavesurfer.backend.buffer;
-            if (!originalBuffer) {
-                alert("Audio buffer is not available.");
-                return;
-            }
-
-                console.log("Original Buffer Sample Rate:", originalBuffer.sampleRate);
-                console.log("Original Buffer Duration:", originalBuffer.duration);
-                console.log("Number of Channels:", originalBuffer.numberOfChannels);
-
-            const sampleRate = originalBuffer.sampleRate;
-            const startSample = Math.floor(region.start * sampleRate);
-            const endSample = Math.floor(region.end * sampleRate);
+            const startSample = Math.floor(region.start * originalBuffer.sampleRate);
+            const endSample = Math.floor(region.end * originalBuffer.sampleRate);
             const cutSamples = endSample - startSample;
-
-            console.log(`Cutting audio from ${region.start}s to ${region.end}s`);
-            console.log(`Start Sample: ${startSample}, End Sample: ${endSample}, Total Samples: ${cutSamples}`);
 
             if (cutSamples <= 0) {
                 alert("Invalid region. Please ensure the region is correctly defined.");
                 return;
             }
 
-            // Criar um novo buffer para o trecho cortado
             const newBuffer = audioContext.createBuffer(
                 originalBuffer.numberOfChannels,
                 cutSamples,
-                sampleRate
+                originalBuffer.sampleRate
             );
 
             for (let channel = 0; channel < originalBuffer.numberOfChannels; channel++) {
                 const channelData = originalBuffer.getChannelData(channel);
-                const cutChannelData = newBuffer.getChannelData(channel);
-                cutChannelData.set(channelData.subarray(startSample, endSample));
+                newBuffer.copyToChannel(channelData.subarray(startSample, endSample), channel);
             }
 
-            console.log("Audio loaded buffer original, size:", originalBuffer.byteLength);
-            console.log("Audio loaded novo  buffer, size:", newBuffer.byteLength);
-
-            // Converter para WAV e iniciar download
-            const wavBlob = bufferToWave(newBuffer);
-            const url = URL.createObjectURL(wavBlob);
-
-            const link = document.createElement("a");
-            link.href = url;
-            link.download = "cut_audio.wav";
-            link.click();
+            exportAudioBuffer(newBuffer);
         });
 
-        // Função auxiliar para converter buffer em WAV
+        async function exportAudioBuffer(audioBuffer) {
+            const offlineContext = new OfflineAudioContext(
+                audioBuffer.numberOfChannels,
+                audioBuffer.length,
+                audioBuffer.sampleRate
+            );
+
+            const source = offlineContext.createBufferSource();
+            source.buffer = audioBuffer;
+            source.connect(offlineContext.destination);
+            source.start();
+
+            const renderedBuffer = await offlineContext.startRendering();
+            const wavBlob = bufferToWave(renderedBuffer);
+
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(wavBlob);
+            link.download = "cut_audio.wav";
+            link.click();
+        }
+
         function bufferToWave(buffer) {
-            const length = buffer.length * buffer.numberOfChannels * 2 + 44;
+            const numChannels = buffer.numberOfChannels;
+            const length = buffer.length * numChannels * 2 + 44;
             const result = new ArrayBuffer(length);
             const view = new DataView(result);
 
-            writeWAVHeader(view, buffer);
+            // Cabeçalho WAV
+            writeUTFBytes(view, 0, "RIFF");
+            view.setUint32(4, length - 8, true);
+            writeUTFBytes(view, 8, "WAVE");
+            writeUTFBytes(view, 12, "fmt ");
+            view.setUint32(16, 16, true);
+            view.setUint16(20, 1, true);
+            view.setUint16(22, numChannels, true);
+            view.setUint32(24, buffer.sampleRate, true);
+            view.setUint32(28, buffer.sampleRate * 4, true);
+            view.setUint16(32, numChannels * 2, true);
+            view.setUint16(34, 16, true);
+            writeUTFBytes(view, 36, "data");
+            view.setUint32(40, length - 44, true);
 
             let offset = 44;
-            for (let i = 0; i < buffer.numberOfChannels; i++) {
-                const channelData = buffer.getChannelData(i);
-                for (let sample of channelData) {
-                    const value = Math.max(-1, Math.min(1, sample));
-                    view.setInt16(offset, value < 0 ? value * 0x8000 : value * 0x7FFF, true);
+            for (let i = 0; i < buffer.length; i++) {
+                for (let channel = 0; channel < numChannels; channel++) {
+                    const sample = buffer.getChannelData(channel)[i];
+                    const value = Math.max(-1, Math.min(1, sample)) * 32767;
+                    view.setInt16(offset, value, true);
                     offset += 2;
                 }
             }
-
-            return new Blob([result], { type: "audio/wav" });
+            return new Blob([view], { type: "audio/wav" });
         }
 
-        function writeWAVHeader(view, buffer) {
-            const sampleRate = buffer.sampleRate;
-            const numChannels = buffer.numberOfChannels;
-            const byteRate = sampleRate * numChannels * 2;
-
-            view.setUint32(0, 0x46464952, false); // "RIFF"
-            view.setUint32(4, 36 + buffer.length * numChannels * 2, true);
-            view.setUint32(8, 0x45564157, false); // "WAVE"
-            view.setUint32(12, 0x20746d66, false); // "fmt "
-            view.setUint32(16, 16, true); // Subchunk1Size
-            view.setUint16(20, 1, true); // AudioFormat
-            view.setUint16(22, numChannels, true); // NumChannels
-            view.setUint32(24, sampleRate, true); // SampleRate
-            view.setUint32(28, byteRate, true); // ByteRate
-            view.setUint16(32, numChannels * 2, true); // BlockAlign
-            view.setUint16(34, 16, true); // BitsPerSample
-            view.setUint32(36, 0x61746164, false); // "data"
-            view.setUint32(40, buffer.length * numChannels * 2, true);
+        function writeUTFBytes(view, offset, string) {
+            for (let i = 0; i < string.length; i++) {
+                view.setUint8(offset + i, string.charCodeAt(i));
+            }
         }
     });
 </script>
