@@ -3,24 +3,23 @@
 {% block content %}
 <script src="https://unpkg.com/wavesurfer.js@5.2.0"></script>
 <script src="https://unpkg.com/wavesurfer.js@5.2.0/dist/plugin/wavesurfer.regions.min.js"></script>
+<script src="/static/audio-editor.js"></script>
 
 <div class="audio-editor">
-    <h2>Gravar áudio</h2>
-    <div class="controls">
-        <button id="recordButton">Iniciar Gravação</button>
-        <button id="stopButton" disabled>Parar Gravação</button>
-    </div>
+    <h2>Gravar e Editar Áudio</h2>
     <div id="waveform" style="margin-top: 20px;"></div>
     <div id="statusMessage" style="margin-top: 20px; color: green;"></div>
     <div class="audio-controls">
+        <button id="recordButton">Iniciar Gravação</button>
+        <button id="stopButton" disabled>Parar Gravação</button>
         <button id="playRegionButton" disabled>Ouvir Áudio</button>
-        <button id="cutButton" disabled>Cortar</button>
+        <button id="cutButton" disabled>Cortar Áudio</button>
     </div>
 </div>
 
 <style>
-    /* Botão padrão */
-    button {
+    /* Botão de gravação */
+    #recordButton {
         display: inline-flex;
         align-items: center;
         justify-content: center;
@@ -33,33 +32,11 @@
         font-size: 16px;
         cursor: pointer;
         position: relative;
-        margin: 0 10px;
-    }
-
-    button:disabled {
-        background-color: lightgray;
-        cursor: not-allowed;
-    }
-
-    /* Botão de gravação */
-    #recordButton::before {
-        content: "";
-        display: inline-block;
-        width: 15px;
-        height: 15px;
-        background-color: white;
-        border-radius: 50%;
-        margin-right: 8px;
-        transition: background-color 0.3s;
     }
 
     #recordButton.recording {
         background-color: red;
         animation: blink 1s infinite;
-    }
-
-    #recordButton.recording::before {
-        background-color: white;
     }
 
     @keyframes blink {
@@ -70,56 +47,6 @@
             background-color: gray;
         }
     }
-
-    /* Botão de parar gravação */
-    #stopButton::before {
-        content: "";
-        display: inline-block;
-        width: 15px;
-        height: 15px;
-        background-color: white;
-        margin-right: 8px;
-        transition: background-color 0.3s;
-    }
-
-    #stopButton.enabled {
-        background-color: red;
-    }
-
-    #stopButton.enabled::before {
-        background-color: red;
-        border-radius: 0;
-    }
-
-    /* Botão Play */
-    #playRegionButton::before {
-        content: "▶";
-        font-size: 16px;
-        margin-right: 8px;
-    }
-
-    /* Botão de Aplicar Corte */
-    #cutButton::before {
-        content: "✂";
-        font-size: 16px;
-        margin-right: 8px;
-    }
-
-    .audio-editor {
-        text-align: center;
-        margin-top: 20px;
-    }
-
-    .controls, .audio-controls {
-        margin: 20px;
-    }
-
-    #waveform {
-        border: 1px solid #ccc;
-        height: 150px;
-        width: 100%;
-        margin: auto;
-    }
 </style>
 
 <script>
@@ -127,27 +54,15 @@
     let audioContext;
     let mediaRecorder;
     let audioChunks = [];
-    let wavesurfer;
     let mediaStream;
-    let region = null;
 
     document.addEventListener("DOMContentLoaded", () => {
         const recordButton = document.getElementById("recordButton");
         const stopButton = document.getElementById("stopButton");
         const playRegionButton = document.getElementById("playRegionButton");
         const cutButton = document.getElementById("cutButton");
-        const waveformContainer = document.getElementById("waveform");
 
-        // Inicializar WaveSurfer com o plugin Regions
-        wavesurfer = WaveSurfer.create({
-            container: waveformContainer,
-            waveColor: "blue",
-            progressColor: "purple",
-            cursorColor: "navy",
-            height: 150,
-            responsive: true,
-            plugins: [WaveSurfer.regions.create()]
-        });
+        wavesurfer = initializeWaveSurfer("#waveform");
 
         const resetRecordingState = () => {
             if (mediaStream) {
@@ -161,25 +76,24 @@
             }
 
             audioChunks = [];
-            region = null;
+            isRecording = false;
 
+            recordButton.classList.remove("recording");
             recordButton.disabled = false;
             stopButton.disabled = true;
-            stopButton.classList.remove("enabled");
             playRegionButton.disabled = true;
             cutButton.disabled = true;
         };
 
-        // Iniciar gravação
+        // Gravação de áudio
         recordButton.addEventListener("click", async () => {
             if (isRecording) return;
 
-            resetRecordingState();
-
+            resetRecordingState(); // Reinicia tudo antes de gravar
             isRecording = true;
             recordButton.classList.add("recording");
+            recordButton.disabled = true;
             stopButton.disabled = false;
-            stopButton.classList.add("enabled");
 
             try {
                 mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -195,39 +109,27 @@
                 mediaRecorder.onstop = async () => {
                     const blob = new Blob(audioChunks, { type: "audio/webm" });
                     audioChunks = [];
-                    const arrayBuffer = await blob.arrayBuffer();
-                    const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
-
                     wavesurfer.loadBlob(blob);
 
                     wavesurfer.on("ready", () => {
-                        cutButton.disabled = false;
                         playRegionButton.disabled = false;
-
-                        region = wavesurfer.addRegion({
-                            start: 0.1,
-                            end: Math.min(5, wavesurfer.getDuration() - 0.1),
-                            color: "rgba(0, 255, 0, 0.3)"
-                        });
+                        cutButton.disabled = false;
+                        createInitialRegion();
                     });
                 };
 
                 mediaRecorder.start();
-                recordButton.disabled = true;
             } catch (error) {
-                console.error("Erro ao acessar o microfone:", error);
-                alert("Microphone access denied. Please allow microphone access.");
-                isRecording = false;
-                recordButton.classList.remove("recording");
+                alert("Erro ao acessar o microfone.");
+                console.error(error);
+                resetRecordingState();
             }
         });
 
-        // Parar gravação
         stopButton.addEventListener("click", () => {
             if (mediaRecorder && mediaRecorder.state !== "inactive") {
                 mediaRecorder.stop();
             }
-
             if (mediaStream) {
                 mediaStream.getTracks().forEach(track => track.stop());
                 mediaStream = null;
@@ -235,109 +137,13 @@
 
             isRecording = false;
             recordButton.classList.remove("recording");
-            stopButton.classList.remove("enabled");
             recordButton.disabled = false;
             stopButton.disabled = true;
         });
 
-        // Reproduzir região
-        playRegionButton.addEventListener("click", () => {
-            if (region) {
-                wavesurfer.play(region.start, region.end);
-            } else {
-                alert("No region selected.");
-            }
-        });
-
-        // Cortar áudio
-        cutButton.addEventListener("click", async () => {
-            if (!region) {
-                alert("Please select a region to cut.");
-                return;
-            }
-
-            const originalBuffer = wavesurfer.backend.buffer;
-            const startSample = Math.floor(region.start * originalBuffer.sampleRate);
-            const endSample = Math.floor(region.end * originalBuffer.sampleRate);
-            const cutSamples = endSample - startSample;
-
-            if (cutSamples <= 0) {
-                alert("Invalid region. Please ensure the region is correctly defined.");
-                return;
-            }
-
-            const newBuffer = audioContext.createBuffer(
-                originalBuffer.numberOfChannels,
-                cutSamples,
-                originalBuffer.sampleRate
-            );
-
-            for (let channel = 0; channel < originalBuffer.numberOfChannels; channel++) {
-                const channelData = originalBuffer.getChannelData(channel);
-                newBuffer.copyToChannel(channelData.subarray(startSample, endSample), channel);
-            }
-
-            exportAudioBuffer(newBuffer);
-        });
-
-        async function exportAudioBuffer(audioBuffer) {
-            const offlineContext = new OfflineAudioContext(
-                audioBuffer.numberOfChannels,
-                audioBuffer.length,
-                audioBuffer.sampleRate
-            );
-
-            const source = offlineContext.createBufferSource();
-            source.buffer = audioBuffer;
-            source.connect(offlineContext.destination);
-            source.start();
-
-            const renderedBuffer = await offlineContext.startRendering();
-            const wavBlob = bufferToWave(renderedBuffer);
-
-            const link = document.createElement("a");
-            link.href = URL.createObjectURL(wavBlob);
-            link.download = "cut_audio.wav";
-            link.click();
-        }
-
-        function bufferToWave(buffer) {
-            const numChannels = buffer.numberOfChannels;
-            const length = buffer.length * numChannels * 2 + 44;
-            const result = new ArrayBuffer(length);
-            const view = new DataView(result);
-
-            writeUTFBytes(view, 0, "RIFF");
-            view.setUint32(4, length - 8, true);
-            writeUTFBytes(view, 8, "WAVE");
-            writeUTFBytes(view, 12, "fmt ");
-            view.setUint32(16, 16, true);
-            view.setUint16(20, 1, true);
-            view.setUint16(22, numChannels, true);
-            view.setUint32(24, buffer.sampleRate, true);
-            view.setUint32(28, buffer.sampleRate * 4, true);
-            view.setUint16(32, numChannels * 2, true);
-            view.setUint16(34, 16, true);
-            writeUTFBytes(view, 36, "data");
-            view.setUint32(40, length - 44, true);
-
-            let offset = 44;
-            for (let i = 0; i < buffer.length; i++) {
-                for (let channel = 0; channel < numChannels; channel++) {
-                    const sample = buffer.getChannelData(channel)[i];
-                    const value = Math.max(-1, Math.min(1, sample)) * 32767;
-                    view.setInt16(offset, value, true);
-                    offset += 2;
-                }
-            }
-            return new Blob([view], { type: "audio/wav" });
-        }
-
-        function writeUTFBytes(view, offset, string) {
-            for (let i = 0; i < string.length; i++) {
-                view.setUint8(offset + i, string.charCodeAt(i));
-            }
-        }
+        // Controles de edição
+        playRegionButton.addEventListener("click", playRegion);
+        cutButton.addEventListener("click", cutAudio);
     });
 </script>
 {% endblock %}

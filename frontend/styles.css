@@ -23,3 +23,107 @@ form {
 #result {
     margin-top: 20px;
 }
+
+ /* Botão padrão */
+    button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 120px;
+        height: 40px;
+        border: none;
+        border-radius: 20px;
+        background-color: gray;
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+        position: relative;
+        margin: 0 10px;
+    }
+
+    button:disabled {
+        background-color: lightgray;
+        cursor: not-allowed;
+    }
+
+    /* Botão Play */
+    #playRegionButton::before {
+        content: "▶";
+        font-size: 16px;
+        margin-right: 8px;
+    }
+
+    /* Botão de Aplicar Corte */
+    #cutButton::before {
+        content: "✂";
+        font-size: 16px;
+        margin-right: 8px;
+    }
+
+    .audio-editor {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .controls, .audio-controls {
+        margin: 20px;
+    }
+
+    #waveform {
+        border: 1px solid #ccc;
+        height: 150px;
+        width: 100%;
+        margin: auto;
+    }
+    /* Botão padrão */
+    button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 120px;
+        height: 40px;
+        border: none;
+        border-radius: 20px;
+        background-color: gray;
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+        position: relative;
+        margin: 0 10px;
+    }
+
+    button:disabled {
+        background-color: lightgray;
+        cursor: not-allowed;
+    }
+
+
+    /* Botão Play */
+    #playRegionButton::before {
+        content: "▶";
+        font-size: 16px;
+        margin-right: 8px;
+    }
+
+    /* Botão de Aplicar Corte */
+    #cutButton::before {
+        content: "✂";
+        font-size: 16px;
+        margin-right: 8px;
+    }
+
+    .audio-editor {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .controls, .audio-controls {
+        margin: 20px;
+    }
+
+    #waveform {
+        border: 1px solid #ccc;
+        height: 150px;
+        width: 100%;
+        margin: auto;
+    }
