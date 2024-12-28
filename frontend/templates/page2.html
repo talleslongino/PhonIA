@@ -60,8 +60,31 @@
             plugins: [WaveSurfer.regions.create()]
         });
 
+        // Reiniciar gravação
+        const resetRecordingState = () => {
+            if (mediaStream) {
+                mediaStream.getTracks().forEach(track => track.stop());
+                mediaStream = null;
+            }
+
+            if (wavesurfer) {
+                wavesurfer.empty(); // Limpa a forma de onda
+                wavesurfer.clearRegions(); // Remove todas as regiões
+            }
+
+            audioChunks = [];
+            region = null;
+
+            recordButton.disabled = false;
+            stopButton.disabled = true;
+            playRegionButton.disabled = true;
+            cutButton.disabled = true;
+        };
+
         // Gravar áudio
         recordButton.addEventListener("click", async () => {
+            resetRecordingState();
+
             try {
                 mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
                 mediaRecorder = new MediaRecorder(mediaStream, { mimeType: "audio/webm" });
@@ -86,8 +109,8 @@
                         playRegionButton.disabled = false;
 
                         region = wavesurfer.addRegion({
-                            start: 0.1,
-                            end: Math.min(5, wavesurfer.getDuration() - 0.1),
+                            start: 0,
+                            end: Math.min(5, wavesurfer.getDuration()),
                             color: "rgba(0, 255, 0, 0.3)"
                         });
                     });
