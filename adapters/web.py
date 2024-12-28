@@ -12,6 +12,8 @@ import os
 # Configurando os templates
 templates = Jinja2Templates(directory="frontend/templates")
 
+favicon_path = 'favicon.ico'
+
 UPLOAD_DIR = "uploads"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
@@ -107,3 +109,8 @@ async def page3(request: Request):
 @app.get("/page4", response_class=HTMLResponse)
 async def page4(request: Request):
     return templates.TemplateResponse("page4.html", {"request": request})
+
+
+@app.get('/favicon.ico', include_in_schema=False)
+async def favicon():
+    return FileResponse(favicon_path)
