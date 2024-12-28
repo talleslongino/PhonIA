@@ -5,27 +5,115 @@
 <script src="https://unpkg.com/wavesurfer.js@5.2.0/dist/plugin/wavesurfer.regions.min.js"></script>
 
 <div class="audio-editor">
-    <h2>Pag 2 - Gravar áudio</h2>
+    <h2>Gravar áudio</h2>
     <div class="controls">
-        <button id="recordButton">Start Recording</button>
-        <button id="stopButton" disabled>Stop Recording</button>
+        <button id="recordButton">Iniciar Gravação</button>
+        <button id="stopButton" disabled>Parar Gravação</button>
     </div>
     <div id="waveform" style="margin-top: 20px;"></div>
     <div id="statusMessage" style="margin-top: 20px; color: green;"></div>
     <div class="audio-controls">
-        <button id="playRegionButton" disabled>Play Region</button>
-        <button id="cutButton" disabled>Apply Cut</button>
+        <button id="playRegionButton" disabled>Ouvir Áudio</button>
+        <button id="cutButton" disabled>Cortar</button>
     </div>
 </div>
 
 <style>
+    /* Botão padrão */
+    button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 120px;
+        height: 40px;
+        border: none;
+        border-radius: 20px;
+        background-color: gray;
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+        position: relative;
+        margin: 0 10px;
+    }
+
+    button:disabled {
+        background-color: lightgray;
+        cursor: not-allowed;
+    }
+
+    /* Botão de gravação */
+    #recordButton::before {
+        content: "";
+        display: inline-block;
+        width: 15px;
+        height: 15px;
+        background-color: white;
+        border-radius: 50%;
+        margin-right: 8px;
+        transition: background-color 0.3s;
+    }
+
+    #recordButton.recording {
+        background-color: red;
+        animation: blink 1s infinite;
+    }
+
+    #recordButton.recording::before {
+        background-color: white;
+    }
+
+    @keyframes blink {
+        0%, 50% {
+            background-color: red;
+        }
+        50%, 100% {
+            background-color: gray;
+        }
+    }
+
+    /* Botão de parar gravação */
+    #stopButton::before {
+        content: "";
+        display: inline-block;
+        width: 15px;
+        height: 15px;
+        background-color: white;
+        margin-right: 8px;
+        transition: background-color 0.3s;
+    }
+
+    #stopButton.enabled {
+        background-color: red;
+    }
+
+    #stopButton.enabled::before {
+        background-color: red;
+        border-radius: 0;
+    }
+
+    /* Botão Play */
+    #playRegionButton::before {
+        content: "▶";
+        font-size: 16px;
+        margin-right: 8px;
+    }
+
+    /* Botão de Aplicar Corte */
+    #cutButton::before {
+        content: "✂";
+        font-size: 16px;
+        margin-right: 8px;
+    }
+
     .audio-editor {
         text-align: center;
         margin-top: 20px;
     }
+
     .controls, .audio-controls {
         margin: 20px;
     }
+
     #waveform {
         border: 1px solid #ccc;
         height: 150px;
@@ -35,6 +123,7 @@
 </style>
 
 <script>
+    let isRecording = false;
     let audioContext;
     let mediaRecorder;
     let audioChunks = [];
@@ -60,7 +149,6 @@
             plugins: [WaveSurfer.regions.create()]
         });
 
-        // Reiniciar gravação
         const resetRecordingState = () => {
             if (mediaStream) {
                 mediaStream.getTracks().forEach(track => track.stop());
@@ -68,8 +156,8 @@
             }
 
             if (wavesurfer) {
-                wavesurfer.empty(); // Limpa a forma de onda
-                wavesurfer.clearRegions(); // Remove todas as regiões
+                wavesurfer.empty();
+                wavesurfer.clearRegions();
             }
 
             audioChunks = [];
@@ -77,13 +165,21 @@
 
             recordButton.disabled = false;
             stopButton.disabled = true;
+            stopButton.classList.remove("enabled");
             playRegionButton.disabled = true;
             cutButton.disabled = true;
         };
 
-        // Gravar áudio
+        // Iniciar gravação
         recordButton.addEventListener("click", async () => {
+            if (isRecording) return;
+
             resetRecordingState();
+
+            isRecording = true;
+            recordButton.classList.add("recording");
+            stopButton.disabled = false;
+            stopButton.classList.add("enabled");
 
             try {
                 mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -109,8 +205,8 @@
                         playRegionButton.disabled = false;
 
                         region = wavesurfer.addRegion({
-                            start: 0,
-                            end: Math.min(5, wavesurfer.getDuration()),
+                            start: 0.1,
+                            end: Math.min(5, wavesurfer.getDuration() - 0.1),
                             color: "rgba(0, 255, 0, 0.3)"
                         });
                     });
@@ -118,10 +214,11 @@
 
                 mediaRecorder.start();
                 recordButton.disabled = true;
-                stopButton.disabled = false;
             } catch (error) {
-                console.error("Error accessing microphone:", error);
+                console.error("Erro ao acessar o microfone:", error);
                 alert("Microphone access denied. Please allow microphone access.");
+                isRecording = false;
+                recordButton.classList.remove("recording");
             }
         });
 
@@ -130,16 +227,20 @@
             if (mediaRecorder && mediaRecorder.state !== "inactive") {
                 mediaRecorder.stop();
             }
+
             if (mediaStream) {
                 mediaStream.getTracks().forEach(track => track.stop());
                 mediaStream = null;
             }
 
+            isRecording = false;
+            recordButton.classList.remove("recording");
+            stopButton.classList.remove("enabled");
             recordButton.disabled = false;
             stopButton.disabled = true;
         });
 
-        // Reproduzir região selecionada
+        // Reproduzir região
         playRegionButton.addEventListener("click", () => {
             if (region) {
                 wavesurfer.play(region.start, region.end);
@@ -148,7 +249,7 @@
             }
         });
 
-        // Cortar e exportar região
+        // Cortar áudio
         cutButton.addEventListener("click", async () => {
             if (!region) {
                 alert("Please select a region to cut.");
@@ -206,7 +307,6 @@
             const result = new ArrayBuffer(length);
             const view = new DataView(result);
 
-            // Cabeçalho WAV
             writeUTFBytes(view, 0, "RIFF");
             view.setUint32(4, length - 8, true);
             writeUTFBytes(view, 8, "WAVE");
