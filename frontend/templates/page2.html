@@ -13,6 +13,7 @@
     <div id="waveform" style="margin-top: 20px;"></div>
     <div id="statusMessage" style="margin-top: 20px; color: green;"></div>
     <div class="audio-controls">
+        <button id="playRegionButton" disabled>Play Region</button>
         <button id="cutButton" disabled>Apply Cut</button>
     </div>
 </div>
@@ -33,8 +34,6 @@
     }
 </style>
 
-
-
 <script>
     let audioContext;
     let mediaRecorder;
@@ -42,12 +41,12 @@
     let wavesurfer;
     let mediaStream;
     let duration = 0;
-    let startPoint = null;
-    let endPoint = null;
+    let region = null;
 
     document.addEventListener("DOMContentLoaded", () => {
         const recordButton = document.getElementById("recordButton");
         const stopButton = document.getElementById("stopButton");
+        const playRegionButton = document.getElementById("playRegionButton");
         const cutButton = document.getElementById("cutButton");
         const waveformContainer = document.getElementById("waveform");
         const statusMessage = document.getElementById("statusMessage");
@@ -61,23 +60,9 @@
             height: 150,
             responsive: true,
             plugins: [
-                WaveSurfer.regions.create({
-                    regionsMinLength: 0.01,
-                    regions: [
-                        {
-                            start: 0.2,
-                            end: 0.5,
-                            loop: false,
-                            color: 'hsla(125, 100%, 15%, 0.5)'
-                        }
-                    ],
-                    dragSelection: {
-                        slop: 5
-                    }
-                })
+                WaveSurfer.regions.create()
             ]
         });
-
 
         // Iniciar gravação
         recordButton.addEventListener("click", async () => {
@@ -104,6 +89,14 @@
                 wavesurfer.on("ready", () => {
                     duration = wavesurfer.getDuration();
                     cutButton.disabled = false;
+                    playRegionButton.disabled = false;
+
+                    // Adicionar região inicial
+                    region = wavesurfer.addRegion({
+                        start: 0,
+                        end: Math.min(5, duration), // Por padrão, primeiros 5 segundos
+                        color: "rgba(0, 255, 0, 0.3)"
+                    });
                 });
             };
 
@@ -127,41 +120,19 @@
             stopButton.disabled = true;
         });
 
-        // Marcar pontos ao clicar na forma de onda
-        wavesurfer.on("click", (e) => {
-            const currentTime = wavesurfer.getCurrentTime();
-
-            if (startPoint === null) {
-                // Definir ponto inicial
-                startPoint = currentTime;
-                wavesurfer.addRegion({
-                    start: currentTime,
-                    end: currentTime + 0.1,
-                    color: "rgba(0, 255, 0, 0.5)"
-                });
-                alert(`Start point set at ${currentTime.toFixed(3)}s`);
-            } else if (endPoint === null) {
-                // Definir ponto final
-                endPoint = currentTime;
-                wavesurfer.addRegion({
-                    start: startPoint,
-                    end: currentTime,
-                    color: "rgba(255, 0, 0, 0.5)"
-                });
-                alert(`End point set at ${currentTime.toFixed(3)}s`);
+        // Ouvir região
+        playRegionButton.addEventListener("click", () => {
+            if (region) {
+                wavesurfer.play(region.start, region.end);
             } else {
-                // Resetar pontos se ambos já estiverem definidos
-                alert("Points reset. Set new start and end points.");
-                startPoint = null;
-                endPoint = null;
-                wavesurfer.clearRegions();
+                alert("No region selected.");
             }
         });
 
         // Aplicar corte
         cutButton.addEventListener("click", async () => {
-            if (startPoint === null || endPoint === null) {
-                alert("Please mark both start and end points on the waveform.");
+            if (!region) {
+                alert("Please select a region to cut.");
                 return;
             }
 
@@ -172,12 +143,12 @@
             }
 
             const sampleRate = originalBuffer.sampleRate;
-            const startSample = Math.floor(startPoint * sampleRate);
-            const endSample = Math.floor(endPoint * sampleRate);
+            const startSample = Math.floor(region.start * sampleRate);
+            const endSample = Math.floor(region.end * sampleRate);
             const cutSamples = endSample - startSample;
 
             if (cutSamples <= 0) {
-                alert("Invalid cut points. Please ensure end point is after start point.");
+                alert("Invalid region. Please ensure the region is correctly defined.");
                 return;
             }
 
