@@ -1,4 +1,5 @@
 //# --- frontend/app.js ---
+
 // Lógica para enviar o arquivo de áudio e exibir os resultados diretamente
 const form = document.getElementById("upload-form");
 const resultDiv = document.getElementById("result");
@@ -23,8 +24,8 @@ form.addEventListener("submit", async (e) => {
 
         if (response.ok) {
             const data = await response.json();
-            resultDiv.innerHTML = `<p>Jitter: ${data.jitter}</p>
-                                   <p>Shimmer: ${data.shimmer}</p>
+            resultDiv.innerHTML = `<p>Jitter ppq5: ${data.jitter}</p>
+                                   <p>Shimmer apq3: ${data.shimmer}</p>
                                    <p>Fundamental Frequency: ${data.fundamental_frequency}</p>`;
             fftPlot.style.display = "block";
         } else {

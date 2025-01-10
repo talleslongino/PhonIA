@@ -10,6 +10,7 @@
 
 <form id="upload-form">
     <input type="file" id="audio-file" accept=".wav" required />
+    <button type="button" id="loadButton">Carregar Áudio</button>
     <button type="submit">Analisar</button>
 </form>
 
@@ -23,24 +24,30 @@
 <script>
     document.addEventListener("DOMContentLoaded", () => {
         const audioFileInput = document.getElementById("audio-file");
+        const loadButton = document.getElementById("loadButton");
         const uploadForm = document.getElementById("upload-form");
+        const resultDiv = document.getElementById("result");
+        const fftPlot = document.getElementById("fft-plot");
         const playRegionButton = document.getElementById("playRegionButton");
         const cutButton = document.getElementById("cutButton");
-
         wavesurfer = initializeWaveSurfer("#waveform");
 
-        uploadForm.addEventListener("submit", (e) => {
-            e.preventDefault();
+        // Carregar áudio no WaveSurfer
+        loadButton.addEventListener("click", () => {
             const file = audioFileInput.files[0];
             if (!file) {
                 alert("Por favor, selecione um arquivo .wav.");
                 return;
             }
+            resultDiv.textContent = "Processando o arquivo...";
+            fftPlot.style.display = "none";
             loadAudio(file);
             playRegionButton.disabled = false;
             cutButton.disabled = false;
         });
 
+
+        // Controles de edição
         playRegionButton.addEventListener("click", playRegion);
         cutButton.addEventListener("click", cutAudio);
     });

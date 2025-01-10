@@ -1,6 +1,7 @@
 # --- domain/audio_analysis.py ---
 from pydantic import BaseModel
 import parselmouth
+from parselmouth.praat import call
 import numpy as np
 from scipy.fft import fft, fftfreq
 import matplotlib.pyplot as plt
@@ -19,14 +20,20 @@ class AudioAnalyzer:
             sound = parselmouth.Sound(audio_path)
             point_process = parselmouth.praat.call(sound, "To PointProcess (periodic, cc)", 75, 500)
 
-            # Updated jitter calculation with correct parameters
-            jitter = parselmouth.praat.call(point_process, "Get jitter (local)", 0, 0, 0.0001, 0.02, 1.3)#, 0.0001, 0.02, 0.02, 1.3)
+            # Jitter (ppq5) calculation with correct parameters
+            jitter = call(point_process, "Get jitter (ppq5)", 0, 0, 0.0001, 0.02, 1.3) #parselmouth.praat.call(point_process, "Get jitter (local)", 0, 0, 0.0001, 0.02, 1.3)#, 0.0001, 0.02, 0.02, 1.3)
 
-            # Updated shimmer calculation with correct parameters
-            shimmer = parselmouth.praat.call([sound, point_process], "Get shimmer (local)", 0, 0, 0.0001, 0.02, 1.3, 1.6)#, 0.0001, 0.02, 0.02, 1.3)
+            # Shimmer (apq3) calculation with correct parameters
+            shimmer = call([sound, point_process], "Get shimmer (apq3)", 0, 0, 0.0001, 0.02, 1.3, 1.6) #parselmouth.praat.call([sound, point_process], "Get shimmer (local)", 0, 0, 0.0001, 0.02, 1.3, 1.6)#, 0.0001, 0.02, 0.02, 1.3)
 
             # Fundamental frequency calculation
             f0 = sound.to_pitch().selected_array["frequency"].mean()
+
+            # Harmonicidade (HNR)
+            harmonicity = sound.to_harmonicity()
+
+            # Calcular Harmonics-to-Noise Ratio (HNR)
+            hnr = call(harmonicity, "Get mean", 0, 0)
 
             # FFT calculation
             signal = sound.values[0]  # Get the mono signal
@@ -35,17 +42,17 @@ class AudioAnalyzer:
             yf = fft(signal)
             xf = fftfreq(n, 1 / sampling_rate)
 
-            # Filter frequencies up to 1000 Hz
+            # Filter frequencies up to 2000 Hz
             mask = xf > 0
             xf = xf[mask]
             yf = 2.0 / n * np.abs(yf[mask])
-            filtered_xf = xf[xf <= 100]#voltar pra 1000hz
+            filtered_xf = xf[xf <= 2000]
             filtered_yf = yf[:len(filtered_xf)]
 
             # Plot FFT
             plt.figure(figsize=(10, 6))
             plt.plot(filtered_xf, filtered_yf, label="FFT")
-            plt.title("FFT Analysis (up to 1000 Hz)")
+            plt.title("FFT Analysis (up to 2000 Hz)")
             plt.xlabel("Frequency (Hz)")
             plt.ylabel("Amplitude")
             plt.grid()

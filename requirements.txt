@@ -8,3 +8,4 @@ matplotlib
 mangum
 pydub
 aiofiles
+SQLAlchemy
