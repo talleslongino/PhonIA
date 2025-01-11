@@ -7,20 +7,31 @@ from scipy.signal import find_peaks
 import matplotlib.pyplot as plt
 import pandas as pd
 import plotly.graph_objects as go
+from pydub import AudioSegment
+from pydub.effects import normalize
 
 
 class AudioAnalysisResult(BaseModel):
     jitter: float
     shimmer: float
     fundamental_frequency: float
+    hnr: float
     frequencies: list
     amplitudes: list
 
 
 class AudioAnalyzer:
+    audio_input: str =''
+    audio_norm: str =''
+
     def analyze(self, audio_path: str) -> AudioAnalysisResult:
         try:
-            sound = parselmouth.Sound(audio_path)
+            self.audio_input = audio_path
+
+            # Normaliza o áudio
+            self.audio_norm = self.normalize_audio(audio_path)
+
+            sound = parselmouth.Sound(self.audio_norm)
             point_process = parselmouth.praat.call(sound, "To PointProcess (periodic, cc)", 75, 500)
 
             # Jitter (ppq5) calculation
@@ -40,13 +51,15 @@ class AudioAnalyzer:
             # Calcular Harmonics-to-Noise Ratio (HNR)
             hnr = call(harmonicity, "Get mean", 0, 0)
 
-            top10_freq = self.calculate_fft(audio_path)
+            top_freq = self.calculate_fft(audio_path)
+
             return AudioAnalysisResult(
                 jitter=jitter,
                 shimmer=shimmer,
                 fundamental_frequency=f0,
-                frequencies=top10_freq["frequencies"],
-                amplitudes=top10_freq["amplitudes"]
+                hnr=hnr,
+                frequencies=top_freq["frequencies"],
+                amplitudes=top_freq["amplitudes"]
             )
 
         except Exception as e:
@@ -139,11 +152,11 @@ class AudioAnalyzer:
         )
 
         # Determina a cor do eixo x e a cor do grid
-        fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='lightgray',
+        fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='gray',
         showline=True, linewidth=1, linecolor='black')
 
         # Determina a cor do eixo y e a cor do grid
-        fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='lightgray',
+        fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='gray',
         showline=True, linewidth=1, linecolor='black')
 
         # Salvar como HTML
@@ -164,3 +177,28 @@ class AudioAnalyzer:
         data.to_csv(filename, index=False)
         print(f"Excel file '{filename}' has been created successfully.")
         return
+
+    def normalize_audio(self, audio_path: str) -> str:
+        """Carrega um arquivo de áudio e depois normaliza ele em relação a amplitude."""
+        # Carregar o áudio
+        audio = AudioSegment.from_file(audio_path)
+
+        # Normalizar
+        normalized_audio = normalize(audio)
+
+        name_norm = self.insert_after_end_name(audio_path)
+        print('teste ' + name_norm)
+
+        # Salvar o áudio normalizado
+        normalized_audio.export(name_norm, format="wav")
+        return name_norm
+
+
+
+    def insert_after_end_name(self, original:str) -> str:
+        """ Inserts a string '_normalized' after the first dot in `original`."""
+        if "." in original:
+            index = original.find(".")  # Find the index of the .wav
+            return original[:index] + '_normalized' + original[index :]  # Insert after dot
+        else:
+            raise ValueError("The original string does not contain an dot ('.')!!!")

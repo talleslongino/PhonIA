@@ -24,6 +24,25 @@ form {
     margin-top: 20px;
 }
 
+/* Estilizar a legenda */
+  .legend {
+    font-size: 14px; /* Tamanho da fonte */
+    font-family: Arial, sans-serif; /* Fonte da legenda */
+    color: black; /* Cor do texto da legenda */
+    width: 100%;
+  }
+
+  /* Ajustar os itens individuais da legenda */
+  .legend text {
+    font-size: 14px; /* Tamanho do texto dos itens */
+  }
+
+  /* Ajustar espaçamento entre os itens */
+  .legend g {
+    margin-bottom: 10px; /* Espaçamento entre os itens */
+    width: 100%;
+  }
+
  /* Botão Padrão */
     button {
         display: inline-flex;
