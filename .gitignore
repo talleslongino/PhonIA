@@ -4,6 +4,9 @@ ehthumbs.db
 [Dd]esktop.ini
 *.lnk
 *.pptx
+*.csv
+*.xls
+*.xlsx
 
 # Compactados
 *.zip

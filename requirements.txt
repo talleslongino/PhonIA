@@ -9,3 +9,4 @@ mangum
 pydub
 aiofiles
 SQLAlchemy
+pandas
