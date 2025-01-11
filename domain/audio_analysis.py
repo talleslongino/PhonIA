@@ -109,45 +109,47 @@ class AudioAnalyzer:
         plt.grid()
         plt.savefig("fft_plot.png")
 
-        self.create_plot_fft(freq=[], amp=[], filename="")
+        self.create_plot_fft(freq_filter_freq, amp_filter_freq, frequencias_filtradas, magnitudes_filtradas)
         self.export_to_excel(positive_frequencies, positive_amplitudes, "fft_audio.csv")
         self.export_to_excel(frequencias_filtradas, magnitudes_filtradas, "fft_audio_filtrada.csv")
 
         return {"frequencies": frequencias_filtradas, "amplitudes": magnitudes_filtradas}
 
-    def create_plot_fft(self, freq: list, amp: list, filename: str) -> None:
+    def create_plot_fft(self, freq_filter_freq, amp_filter_freq, frequencias_filtradas, magnitudes_filtradas) -> None:
         """Create a iterative plot in html form"""
-        # Dados do exemplo
-        x = np.linspace(0, 10, 100)
-        y = np.sin(x)
 
         # Criando o gráfico interativo
         fig = go.Figure()
-        fig.add_trace(go.Scatter(x=x, y=y, mode='lines+markers', name='Seno'))
+
+        fig.add_trace(go.Scatter(x=freq_filter_freq, y=amp_filter_freq, mode='lines', name='FFT'))
+        fig.add_trace(go.Scatter(x=frequencias_filtradas, y=magnitudes_filtradas, mode='markers', name='Maiores Picos'))
 
         # Configuração do layout
         fig.update_layout(
-            title="Gráfico Interativo",
-            xaxis_title="Eixo X",
-            yaxis_title="Eixo Y",
-            template= None #"plotly_dark"  # Opção de tema
+            title=dict(text="Gráfico Interativo - FFT do Sinal de Áudio e Maiores Picos",
+                       x=0.5, xanchor="center",
+                       font=dict(family="Arial, sans-serif", size=20, color="black", weight="bold")),
+            xaxis_title=dict(text="Frequência (Hz)",font=dict(size=16, color="black", weight="bold")),
+            yaxis_title=dict(text="Amplitude",font=dict(size=16, color="black", weight="bold")),
+            xaxis=dict(tickfont=dict(size=12, weight="bold")),
+            yaxis=dict(tickfont=dict(size=12, weight="bold")),
+            plot_bgcolor='whitesmoke', #determina a cor do fundo
+            template='plotly_white', #"plotly_dark"  # Opção de tema
+            legend=dict(x=0.5, y=1.1, xanchor="center", orientation="h")
         )
+
+        # Determina a cor do eixo x e a cor do grid
+        fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='lightgray',
+        showline=True, linewidth=1, linecolor='black')
+
+        # Determina a cor do eixo y e a cor do grid
+        fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='lightgray',
+        showline=True, linewidth=1, linecolor='black')
 
         # Salvar como HTML
         fig.write_html("frontend/assets/grafico_interativo.html")
-        # fig.show()
         print("Gráfico salvo como 'grafico_interativo.html'.")
 
-        # # Plot FFT with top frequencies highlighted
-        # plt.figure(figsize=(10, 6))
-        # plt.plot(freq_filter_freq, amp_filter_freq, label="FFT")
-        # plt.scatter(frequencias_filtradas, magnitudes_filtradas, color='red', label="Top Peaks")
-        # plt.title("FFT of the Audio Signal with Top Peaks")
-        # plt.xlabel("Frequency (Hz)")
-        # plt.ylabel("Amplitude")
-        # plt.legend()
-        # plt.grid()
-        # plt.savefig("fft_plot.png")
         return
 
     def export_to_excel(self, freq: list, amp: list, filename: str) -> None:
