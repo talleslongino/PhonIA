@@ -11,3 +11,4 @@ aiofiles
 SQLAlchemy
 pandas
 numpy
+plotly

@@ -4,6 +4,7 @@
 const form = document.getElementById("upload-form");
 const resultDiv = document.getElementById("result");
 const fftPlot = document.getElementById("fft-plot");
+const fftPlotly = document.getElementById("fft-plotly");
 
 form.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -28,6 +29,7 @@ form.addEventListener("submit", async (e) => {
                                    <p>Shimmer apq3: ${data.shimmer}</p>
                                    <p>Fundamental Frequency: ${data.fundamental_frequency}</p>`;
             fftPlot.style.display = "block";
+            fftPlotly.style.display = "block";
         } else {
             const error = await response.json();
             resultDiv.innerHTML = `<p>Error: ${error.detail}</p>`;

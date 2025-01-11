@@ -28,9 +28,12 @@
         const uploadForm = document.getElementById("upload-form");
         const resultDiv = document.getElementById("result");
         const fftPlot = document.getElementById("fft-plot");
+        const fftPloly = document.getElementById("fft-plotly");
         const playRegionButton = document.getElementById("playRegionButton");
         const cutButton = document.getElementById("cutButton");
         wavesurfer = initializeWaveSurfer("#waveform");
+        fftPlot.style.display = "none";
+        fftPlotly.style.display = "none";
 
         // Carregar áudio no WaveSurfer
         loadButton.addEventListener("click", () => {
@@ -41,6 +44,7 @@
             }
             resultDiv.textContent = "Processando o arquivo...";
             fftPlot.style.display = "none";
+            fftPlotly.style.display = "none";
             loadAudio(file);
             playRegionButton.disabled = false;
             cutButton.disabled = false;
@@ -53,5 +57,6 @@
     });
 </script>
 <img id="fft-plot" src="/fft-plot" alt="FFT Plot" style="display:none; margin-top: 20px;">
+<iframe id="fft-plotly"src="/static/assets/grafico_interativo.html" width="100%" height="500px" frameborder="0"></iframe>
     <script src="/static/app.js"></script>
 {% endblock %}

@@ -6,6 +6,7 @@ import numpy as np
 from scipy.signal import find_peaks
 import matplotlib.pyplot as plt
 import pandas as pd
+import plotly.graph_objects as go
 
 
 class AudioAnalysisResult(BaseModel):
@@ -107,10 +108,47 @@ class AudioAnalyzer:
         plt.legend()
         plt.grid()
         plt.savefig("fft_plot.png")
+
+        self.create_plot_fft(freq=[], amp=[], filename="")
         self.export_to_excel(positive_frequencies, positive_amplitudes, "fft_audio.csv")
         self.export_to_excel(frequencias_filtradas, magnitudes_filtradas, "fft_audio_filtrada.csv")
 
         return {"frequencies": frequencias_filtradas, "amplitudes": magnitudes_filtradas}
+
+    def create_plot_fft(self, freq: list, amp: list, filename: str) -> None:
+        """Create a iterative plot in html form"""
+        # Dados do exemplo
+        x = np.linspace(0, 10, 100)
+        y = np.sin(x)
+
+        # Criando o gráfico interativo
+        fig = go.Figure()
+        fig.add_trace(go.Scatter(x=x, y=y, mode='lines+markers', name='Seno'))
+
+        # Configuração do layout
+        fig.update_layout(
+            title="Gráfico Interativo",
+            xaxis_title="Eixo X",
+            yaxis_title="Eixo Y",
+            template= None #"plotly_dark"  # Opção de tema
+        )
+
+        # Salvar como HTML
+        fig.write_html("frontend/assets/grafico_interativo.html")
+        # fig.show()
+        print("Gráfico salvo como 'grafico_interativo.html'.")
+
+        # # Plot FFT with top frequencies highlighted
+        # plt.figure(figsize=(10, 6))
+        # plt.plot(freq_filter_freq, amp_filter_freq, label="FFT")
+        # plt.scatter(frequencias_filtradas, magnitudes_filtradas, color='red', label="Top Peaks")
+        # plt.title("FFT of the Audio Signal with Top Peaks")
+        # plt.xlabel("Frequency (Hz)")
+        # plt.ylabel("Amplitude")
+        # plt.legend()
+        # plt.grid()
+        # plt.savefig("fft_plot.png")
+        return
 
     def export_to_excel(self, freq: list, amp: list, filename: str) -> None:
         """Export two lists into an Excel file with two columns."""
