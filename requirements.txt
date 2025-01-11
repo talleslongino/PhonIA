@@ -10,3 +10,4 @@ pydub
 aiofiles
 SQLAlchemy
 pandas
+numpy
