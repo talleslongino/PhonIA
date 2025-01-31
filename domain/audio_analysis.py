@@ -12,9 +12,21 @@ from pydub.effects import normalize
 
 
 class AudioAnalysisResult(BaseModel):
-    jitter: float
-    shimmer: float
+    jitter: float  # remover depois
+    localJitter: float
+    localabsoluteJitter: float
+    rapJitter: float
+    ppq5Jitter: float
+    ddpJitter: float
+    shimmer: float # remover depois
+    localShimmer: float
+    localdbShimmer: float
+    apq3Shimmer: float
+    apq5Shimmer: float
+    apq11Shimmer: float
+    ddaShimmer: float
     fundamental_frequency: float
+    # harmonicity: float
     hnr: float
     frequencies: list
     amplitudes: list
@@ -32,15 +44,33 @@ class AudioAnalyzer:
             self.audio_norm = self.normalize_audio(audio_path)
 
             sound = parselmouth.Sound(self.audio_norm)
-            point_process = parselmouth.praat.call(sound, "To PointProcess (periodic, cc)", 75, 500)
+            pointProcess = parselmouth.praat.call(sound, "To PointProcess (periodic, cc)", 75, 500)
 
+            # NOVOS PARAMS COMPLETOS:
+            # Jitter PARAMS
+            localJitter = call(pointProcess, "Get jitter (local)", 0, 0, 0.0001, 0.02, 1.3) * 100
+            localabsoluteJitter = call(pointProcess, "Get jitter (local, absolute)", 0, 0, 0.0001, 0.02, 1.3)
+            rapJitter = call(pointProcess, "Get jitter (rap)", 0, 0, 0.0001, 0.02, 1.3) * 100
+            ppq5Jitter = call(pointProcess, "Get jitter (ppq5)", 0, 0, 0.0001, 0.02, 1.3) * 100
+            ddpJitter = call(pointProcess, "Get jitter (ddp)", 0, 0, 0.0001, 0.02, 1.3) * 100
+
+            # Shimmer PARAMS
+            localShimmer =  call([sound, pointProcess], "Get shimmer (local)", 0, 0, 0.0001, 0.02, 1.3, 1.6) * 100
+            localdbShimmer = call([sound, pointProcess], "Get shimmer (local_dB)", 0, 0, 0.0001, 0.02, 1.3, 1.6)
+            apq3Shimmer = call([sound, pointProcess], "Get shimmer (apq3)", 0, 0, 0.0001, 0.02, 1.3, 1.6) * 100
+            apq5Shimmer = call([sound, pointProcess], "Get shimmer (apq5)", 0, 0, 0.0001, 0.02, 1.3, 1.6) * 100
+            apq11Shimmer = call([sound, pointProcess], "Get shimmer (apq11)", 0, 0, 0.0001, 0.02, 1.3, 1.6) * 100
+            ddaShimmer = call([sound, pointProcess], "Get shimmer (dda)", 0, 0, 0.0001, 0.02, 1.3, 1.6) * 100
+
+ # remover depois
             # Jitter (ppq5) calculation
-            jitter = call(point_process, "Get jitter (ppq5)", 0, 0, 0.0001, 0.02, 1.3)
-            # parselmouth.praat.call(point_process, "Get jitter (local)", 0, 0, 0.0001, 0.02, 1.3)#, 0.0001, 0.02, 0.02, 1.3)
+            jitter = call(pointProcess, "Get jitter (ppq5)", 0, 0, 0.0001, 0.02, 1.3) * 100
+            # parselmouth.praat.call(pointProcess, "Get jitter (local)", 0, 0, 0.0001, 0.02, 1.3)#, 0.0001, 0.02, 0.02, 1.3)
 
+ # remover depois
             # Shimmer (apq3) calculation
-            shimmer = call([sound, point_process], "Get shimmer (apq3)", 0, 0, 0.0001, 0.02, 1.3, 1.6)
-            # parselmouth.praat.call([sound, point_process], "Get shimmer (local)", 0, 0, 0.0001, 0.02, 1.3, 1.6)#, 0.0001, 0.02, 0.02, 1.3)
+            shimmer = call([sound, pointProcess], "Get shimmer (apq3)", 0, 0, 0.0001, 0.02, 1.3, 1.6) * 100
+            # parselmouth.praat.call([sound, pointProcess], "Get shimmer (local)", 0, 0, 0.0001, 0.02, 1.3, 1.6)#, 0.0001, 0.02, 0.02, 1.3)
 
             # Fundamental frequency calculation
             f0 = sound.to_pitch().selected_array["frequency"].mean()
@@ -48,14 +78,29 @@ class AudioAnalyzer:
             # Harmonicidade (HNR)
             harmonicity = sound.to_harmonicity()
 
+            # aaaa = sound.to_harmonicity()
+            # print('harmonicity ', type(aaaa), aaaa) # debug
+
             # Calcular Harmonics-to-Noise Ratio (HNR)
             hnr = call(harmonicity, "Get mean", 0, 0)
+
 
             top_freq = self.calculate_fft(audio_path)
 
             return AudioAnalysisResult(
                 jitter=jitter,
+                localJitter=localJitter,
+                localabsoluteJitter=localabsoluteJitter,
+                rapJitter=rapJitter,
+                ppq5Jitter=ppq5Jitter,
+                ddpJitter=ddpJitter,
                 shimmer=shimmer,
+                localShimmer=localShimmer,
+                localdbShimmer=localdbShimmer,
+                apq3Shimmer=apq3Shimmer,
+                apq5Shimmer=apq5Shimmer,
+                apq11Shimmer=apq11Shimmer,
+                ddaShimmer=ddaShimmer,
                 fundamental_frequency=f0,
                 hnr=hnr,
                 frequencies=top_freq["frequencies"],

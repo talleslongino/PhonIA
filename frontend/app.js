@@ -25,10 +25,19 @@ form.addEventListener("submit", async (e) => {
 
         if (response.ok) {
             const data = await response.json();
-            resultDiv.innerHTML = `<p>Jitter (ppq5): ${data.jitter}</p>
-                                   <p>Shimmer (apq3): ${data.shimmer}</p>
-                                   <p>Fundamental Frequency: ${data.fundamental_frequency}</p>
-                                   <p>HNR: ${data.hnr}</p>`;
+            resultDiv.innerHTML = `<p>Jitter (local): ${data.localJitter}</p>
+                                    <p>Jitter (local, absolute): ${data.localabsoluteJitter}</p>
+                                    <p>Jitter (rap): ${data.rapJitter}</p>
+                                    <p>Jitter (ppq5): ${data.ppq5Jitter}</p>
+                                    <p>Jitter (ddp): ${data.ddpJitter}</p>
+                                    <p>Shimmer (local): ${data.localShimmer}</p>
+                                    <p>Shimmer (local, dB): ${data.localdbShimmer}</p>
+                                    <p>Shimmer (apq3): ${data.apq3Shimmer}</p>
+                                    <p>Shimmer (apq5): ${data.apq5Shimmer}</p>
+                                    <p>Shimmer (apq11): ${data.apq11Shimmer}</p>
+                                    <p>Shimmer (dda): ${data.ddaShimmer}</p>
+                                    <p>Fundamental Frequency: ${data.fundamental_frequency}</p>
+                                    <p>HNR: ${data.hnr}</p>`;
             fftPlot.style.display = "block";
             fftPlotly.style.display = "block";
 
