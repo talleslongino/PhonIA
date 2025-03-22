@@ -1,9 +1,31 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <title>Termo de Consentimento</title>
   <link rel="stylesheet" href="/static/styles.css">
-
+  <style>
+    #user-info-popup {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #fff;
+      padding:50px;
+      border: 1px solid #ccc;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+      z-index: 1000;
+    }
+    #popup-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 999;
+    }
+  </style>
 <body>
   <div class="container">
     <h1>Termo de Consentimento</h1>
@@ -17,22 +39,58 @@
     <br><br>
     <button id="continue-btn" disabled>Continuar</button>
   </div>
-
+  <div id="popup-overlay"></div>
+  <div id="user-info-popup">
+    <h3>Informe seus dados para realizar cadastro na plataforma:</h3>
+    <input type="text" id="numero" placeholder="Número Registro"><br><br>
+    <input type="text" id="problem" placeholder="Problema Diagnosticado? (Sim/Não)"><br><br>
+    <input type="text" id="trata" placeholder="Faz Tratamento? (Sim/Não)"><br><br>
+    <input type="text" id="age" placeholder="Idade"><br><br>
+    <input type="text" id="occupation" placeholder="Profissão"><br><br>
+    <button id="submit-user-info">Enviar</button>
+  </div>
   <script>
     // Reseta o consentimento toda vez que o app inicia
     localStorage.removeItem("consentGiven");
 
     const checkbox = document.getElementById("consent-checkbox");
     const button = document.getElementById("continue-btn");
+    const overlay = document.getElementById("popup-overlay");
+    const popup = document.getElementById("user-info-popup");
+    const submitUserInfo = document.getElementById("submit-user-info");
+    const redirectTo = sessionStorage.getItem("pendingRedirect") || "/";
 
     checkbox.addEventListener("change", () => {
       button.disabled = !checkbox.checked;
     });
 
     button.addEventListener("click", () => {
-      localStorage.setItem("consentGiven", "true");
-      window.location.href = "/";
+      // Exibe o popup de dados do usuário
+      overlay.style.display = "block";
+      popup.style.display = "block";
+<!--      localStorage.setItem("consentGiven", "true");-->
+<!--      window.location.href = "/";-->
     });
-  </script>
+
+      submitUserInfo.addEventListener("click", () => {
+      const numero = document.getElementById("numero").value;
+      const problem = document.getElementById("problem").value;
+      const trata = document.getElementById("trata").value;
+      const age = document.getElementById("age").value;
+      const occupation = document.getElementById("occupation").value;
+
+      if (!numero || !problem || !trata  || !age || !occupation) {
+        alert("Por favor, preencha todos os campos.");
+        return;
+      }
+
+      // Aqui você pode salvar os dados localmente ou enviar para o backend
+      console.log({ numero, problem, trata, age, occupation });
+
+      localStorage.setItem("consentGiven", "true");
+      sessionStorage.removeItem("pendingRedirect");
+      window.location.href = redirectTo;
+    });
+</script>
 </body>
 {% endblock %}
