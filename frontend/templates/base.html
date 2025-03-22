@@ -1,29 +1,42 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PhonIA</title>
     <link rel="stylesheet" href="/static/styles.css">
 </head>
+<script>
+  // Desabilita os links enquanto não houver consentimento
+  if (!localStorage.getItem("consentGiven")) {
+    document.querySelectorAll("nav a").forEach(link => {
+      link.addEventListener("click", (e) => {
+        e.preventDefault();
+        alert("aaVocê precisa aceitar o termo de consentimento para acessar esta página.");
+        window.location.href = "/consent";
+      });
+    });
+  }
+</script>
 <body>
     <meta charset="UTF-8">
     <header>
         <img src="/static/assets/logo.png" alt="Logotipo" class="logo">
         <img src="/static/assets/phonIA_logo.png" alt="Logotipo" class="logo">
         <nav>
-            <a href="/">Home</a> |
-            <a href="/page1">Pag 1</a> |
-            <a href="/page2">Pag 2</a> |
-            <a href="/page3">Pag 3</a> |
-            <a href="/page4">Pag 4</a>
+            <a href="/">Início</a> |
+            <a href="/page1">Carregar</a> |
+            <a href="/page2">Gravar</a> |
+            <a href="/page3">Resultados</a> |
+            <a href="/page4">Tutorial</a> |
+            <a href="/consent">Consentimento</a>
         </nav>
     </header>
     <main>
         {% block content %}{% endblock %}
     </main>
     <footer>
-        <p>&copy; 2024 PhonIA WebApp</p>
+        <p>&copy; 2025 PhonIA WebApp</p>
     </footer>
 </body>
 <link rel="manifest" href="/static/assets/manifest.json">

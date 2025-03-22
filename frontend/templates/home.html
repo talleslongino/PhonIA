@@ -9,6 +9,13 @@
         <button onclick="location.href='/page2'">Gravar áudio</button>
         <button onclick="location.href='/page3'">Resultados DB</button>
         <button onclick="location.href='/page4'">Tutorial</button>
+        <button onclick="localStorage.removeItem('consentGiven'); window.location.href='/consent';">
+                Visualizar Termo
+        </button>
+        <button onclick="localStorage.removeItem('consentGiven'); window.location.href='/';">
+                Sair
+        </button>
+
     </div>
 </div>
 <style>
@@ -27,4 +34,16 @@
         cursor: pointer;
     }
 </style>
+<script>
+  document.querySelectorAll("nav a").forEach(link => {
+    link.addEventListener("click", (e) => {
+      if (!localStorage.getItem("consentGiven")) {
+        e.preventDefault();
+        sessionStorage.setItem("pendingRedirect", link.href);
+        alert("Você precisa aceitar o termo de consentimento antes de acessar esta página.");
+        window.location.href = "/consent";
+      }
+    });
+  });
+</script>
 {% endblock %}

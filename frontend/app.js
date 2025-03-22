@@ -6,6 +6,15 @@ const resultDiv = document.getElementById("result");
 const fftPlot = document.getElementById("fft-plot");
 const fftPlotly = document.getElementById("fft-plotly");
 
+
+
+// Verifica se o termo de consentimento foi aceito
+if (!localStorage.getItem("consentGiven")) {
+  alert("Você precisa aceitar o termo de consentimento para continuar.");
+  window.location.href = "/consent";
+  sessionStorage.setItem("pendingRedirect", link.href);
+}
+
 form.addEventListener("submit", async (e) => {
     e.preventDefault();
     const fileInput = document.getElementById("audio-file");

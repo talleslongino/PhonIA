@@ -4,6 +4,11 @@
 <script src="https://unpkg.com/wavesurfer.js@5.2.0"></script>
 <script src="https://unpkg.com/wavesurfer.js@5.2.0/dist/plugin/wavesurfer.regions.min.js"></script>
 <script src="/static/audio-editor.js"></script>
+<script src="/static/app.js"></script>
+<!--<script>-->
+<!--    // Reseta o consentimento toda vez que o app inicia-->
+<!--    localStorage.removeItem("consentGiven");-->
+<!--</script>-->
 
 <div class="audio-editor">
     <h2>Gravar e Editar Áudio</h2>
@@ -134,7 +139,7 @@
                 mediaStream.getTracks().forEach(track => track.stop());
                 mediaStream = null;
             }
-
+            alert("Gravação encerrada!");
             isRecording = false;
             recordButton.classList.remove("recording");
             recordButton.disabled = false;

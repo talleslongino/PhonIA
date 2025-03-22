@@ -75,11 +75,6 @@ async def upload_audio(file: UploadFile):
         audio_file.write(await file.read())
     return {"filename": file.filename}
 
-# @app.get("/")
-# def serve_frontend():
-#     with open("frontend/index.html") as f:
-#         return HTMLResponse(content=f.read(), status_code=200)
-
 
 # Home Page
 @app.get("/", response_class=HTMLResponse)
@@ -87,28 +82,33 @@ async def home(request: Request):
     return templates.TemplateResponse("home.html", {"request": request})
 
 
-# Página 1
+# Página 1 - Carregar Áudio
 @app.get("/page1", response_class=HTMLResponse)
 async def page1(request: Request):
     return templates.TemplateResponse("page1.html", {"request": request})
 
 
-# Página 2
+# Página 2 - Gravar Áudio
 @app.get("/page2", response_class=HTMLResponse)
 async def page2(request: Request):
     return templates.TemplateResponse("page2.html", {"request": request})
 
 
-# Página 3
+# Página 3 - Carregar Resultados DB
 @app.get("/page3", response_class=HTMLResponse)
 async def page3(request: Request):
     return templates.TemplateResponse("page3.html", {"request": request})
 
 
-# Página 4
+# Página 4 - Tutorial
 @app.get("/page4", response_class=HTMLResponse)
 async def page4(request: Request):
     return templates.TemplateResponse("page4.html", {"request": request})
+
+# Página Termo de Consentimento
+@app.get("/consent", response_class=HTMLResponse)
+async def serve_consent(request: Request):
+    return templates.TemplateResponse("consent.html", {"request": request})
 
 
 @app.get('/favicon.ico', include_in_schema=False)

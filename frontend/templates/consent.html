@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <title>Termo de Consentimento</title>
+  <link rel="stylesheet" href="/static/styles.css">
+
+<body>
+  <div class="container">
+    <h1>Termo de Consentimento</h1>
+    <p>
+      Ao prosseguir, você concorda que os dados de áudio enviados serão utilizados exclusivamente para fins de análise e pesquisa. Nenhum dado será compartilhado com terceiros sem sua autorização.
+    </p>
+    <label>
+      <input type="checkbox" id="consent-checkbox">
+      Eu li e concordo com os termos de consentimento.
+    </label>
+    <br><br>
+    <button id="continue-btn" disabled>Continuar</button>
+  </div>
+
+  <script>
+    // Reseta o consentimento toda vez que o app inicia
+    localStorage.removeItem("consentGiven");
+
+    const checkbox = document.getElementById("consent-checkbox");
+    const button = document.getElementById("continue-btn");
+
+    checkbox.addEventListener("change", () => {
+      button.disabled = !checkbox.checked;
+    });
+
+    button.addEventListener("click", () => {
+      localStorage.setItem("consentGiven", "true");
+      window.location.href = "/";
+    });
+  </script>
+</body>
+{% endblock %}

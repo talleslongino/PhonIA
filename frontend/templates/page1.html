@@ -26,7 +26,6 @@
     <button id="playRegionButton" disabled>Ouvir Áudio</button>
     <button id="cutButton" disabled>Cortar Áudio</button>
 </div>
-
 <script>
     document.addEventListener("DOMContentLoaded", () => {
         const audioFileInput = document.getElementById("audio-file");
@@ -64,5 +63,9 @@
 </script>
 <img id="fft-plot" src="/fft-plot" alt="FFT Plot" style="display:none; margin-top: 20px;">
 <iframe id="fft-plotly" src="/static/assets/grafico_interativo.html" width="100%" height="500px" frameborder="0"></iframe>
-    <script src="/static/app.js"></script>
+<script src="/static/app.js"></script>
+<!--<script>-->
+<!--    // Reseta o consentimento toda vez que o app inicia-->
+<!--    localStorage.removeItem("consentGiven");-->
+<!--</script>-->
 {% endblock %}
