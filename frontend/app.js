@@ -15,82 +15,84 @@ if (!localStorage.getItem("consentGiven")) {
   sessionStorage.setItem("pendingRedirect", link.href);
 }
 
-form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const fileInput = document.getElementById("audio-file");
-    const file = fileInput.files[0];
+// Só adiciona o listener se o form existe
+if (form) {
+    form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const fileInput = document.getElementById("audio-file");
+        const file = fileInput.files[0];
 
-    if (!file) return;
+        if (!file) return;
 
-    const formData = new FormData();
-    formData.append("file", file);
+        const formData = new FormData();
+        formData.append("file", file);
 
-    // Envia o arquivo para análise e exibe os resultados
-    try {
-        const response = await fetch("/start-analysis", {
-            method: "POST",
-            body: formData,
-        });
+        // Envia o arquivo para análise e exibe os resultados
+        try {
+            const response = await fetch("/start-analysis", {
+                method: "POST",
+                body: formData,
+            });
 
-        if (response.ok) {
-            const data = await response.json();
-            resultDiv.innerHTML = `<p>Jitter (local): ${data.localJitter}</p>
-                                    <p>Jitter (local, absolute): ${data.localabsoluteJitter}</p>
-                                    <p>Jitter (rap): ${data.rapJitter}</p>
-                                    <p>Jitter (ppq5): ${data.ppq5Jitter}</p>
-                                    <p>Jitter (ddp): ${data.ddpJitter}</p>
-                                    <p>Shimmer (local): ${data.localShimmer}</p>
-                                    <p>Shimmer (local, dB): ${data.localdbShimmer}</p>
-                                    <p>Shimmer (apq3): ${data.apq3Shimmer}</p>
-                                    <p>Shimmer (apq5): ${data.apq5Shimmer}</p>
-                                    <p>Shimmer (apq11): ${data.apq11Shimmer}</p>
-                                    <p>Shimmer (dda): ${data.ddaShimmer}</p>
-                                    <p>Fundamental Frequency: ${data.fundamental_frequency}</p>
-                                    <p>HNR: ${data.hnr}</p>`;
-            fftPlot.style.display = "block";
-            fftPlotly.style.display = "block";
+            if (response.ok) {
+                const data = await response.json();
+                resultDiv.innerHTML = `<p>Jitter (local): ${data.localJitter}</p>
+                                        <p>Jitter (local, absolute): ${data.localabsoluteJitter}</p>
+                                        <p>Jitter (rap): ${data.rapJitter}</p>
+                                        <p>Jitter (ppq5): ${data.ppq5Jitter}</p>
+                                        <p>Jitter (ddp): ${data.ddpJitter}</p>
+                                        <p>Shimmer (local): ${data.localShimmer}</p>
+                                        <p>Shimmer (local, dB): ${data.localdbShimmer}</p>
+                                        <p>Shimmer (apq3): ${data.apq3Shimmer}</p>
+                                        <p>Shimmer (apq5): ${data.apq5Shimmer}</p>
+                                        <p>Shimmer (apq11): ${data.apq11Shimmer}</p>
+                                        <p>Shimmer (dda): ${data.ddaShimmer}</p>
+                                        <p>Fundamental Frequency: ${data.fundamental_frequency}</p>
+                                        <p>HNR: ${data.hnr}</p>`;
+                fftPlot.style.display = "block";
+                fftPlotly.style.display = "block";
 
-            const results = [
-            { freq: "Jitter (ppq5)", amp: 1.11 },
-            { freq: "Shimmer (apq3)", amp: 2.22 },
-            { freq: "Frequência Fundamental (Hz)", amp: 3.33 },
-            { freq: "HNR (Harmonic-to-Noise Ratio)", amp: 4.44 }
-            ];
+                const results = [
+                { freq: "Jitter (ppq5)", amp: 1.11 },
+                { freq: "Shimmer (apq3)", amp: 2.22 },
+                { freq: "Frequência Fundamental (Hz)", amp: 3.33 },
+                { freq: "HNR (Harmonic-to-Noise Ratio)", amp: 4.44 }
+                ];
 
-            const results2 = [
-            { metrica: "Jitter (ppq5)", valor: data.jitter },
-            { metrica: "Shimmer (apq3)", valor: data.shimmer },
-            { metrica: "Frequência Fundamental (Hz)", valor: data.fundamental_frequency },
-            { metrica: "HNR (Harmonic-to-Noise Ratio)", valor: data.hnr }
-            ];
+                const results2 = [
+                { metrica: "Jitter (ppq5)", valor: data.jitter },
+                { metrica: "Shimmer (apq3)", valor: data.shimmer },
+                { metrica: "Frequência Fundamental (Hz)", valor: data.fundamental_frequency },
+                { metrica: "HNR (Harmonic-to-Noise Ratio)", valor: data.hnr }
+                ];
 
-//            // Verificar se as listas têm o mesmo tamanho
-//            if (data.frequencies.length !== data.amplitudes.length) {
-//                console.error("As listas de frequências e amplitudes têm tamanhos diferentes!");
-//            } else {
-//                // Criar um dicionário combinando os itens das listas
-//                const results = data.frequencies.map((freq, index) => {
-//                    return {
-//                        freq: freq,
-//                        amp: data.amplitudes[index]
-//                    };
-//                });
-//
-//            console.log(results);
+    //            // Verificar se as listas têm o mesmo tamanho
+    //            if (data.frequencies.length !== data.amplitudes.length) {
+    //                console.error("As listas de frequências e amplitudes têm tamanhos diferentes!");
+    //            } else {
+    //                // Criar um dicionário combinando os itens das listas
+    //                const results = data.frequencies.map((freq, index) => {
+    //                    return {
+    //                        freq: freq,
+    //                        amp: data.amplitudes[index]
+    //                    };
+    //                });
+    //
+    //            console.log(results);
 
-            // Chama a função para criar a tabela com os dados
-            criarTabela(results);
-            criarTabela_fft(results2);
+                // Chama a função para criar a tabela com os dados
+                criarTabela(results);
+                criarTabela_fft(results2);
 
-        } else {
-            const error = await response.json();
-            resultDiv.innerHTML = `<p>Error: ${error.detail}</p>`;
+            } else {
+                const error = await response.json();
+                resultDiv.innerHTML = `<p>Error: ${error.detail}</p>`;
+            }
+        } catch (error) {
+            resultDiv.innerHTML = `<p>Error: ${error.message}</p>`;
         }
-    } catch (error) {
-        resultDiv.innerHTML = `<p>Error: ${error.message}</p>`;
-    }
-});
-
+    });
+};
 
         // Função para criar e inserir a tabela
         function criarTabela(dados) {
