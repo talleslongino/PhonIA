@@ -4,7 +4,6 @@
 <script src="https://unpkg.com/wavesurfer.js@5.2.0"></script>
 <script src="https://unpkg.com/wavesurfer.js@5.2.0/dist/plugin/wavesurfer.regions.min.js"></script>
 <script src="/static/audio-editor.js"></script>
-<script src="/static/app.js"></script>
 <!--<script>-->
 <!--    // Reseta o consentimento toda vez que o app inicia-->
 <!--    localStorage.removeItem("consentGiven");-->
@@ -19,8 +18,15 @@
         <button id="stopButton" disabled>Parar Gravação</button>
         <button id="playRegionButton" disabled>Ouvir Áudio</button>
         <button id="cutButton" disabled>Cortar Áudio</button>
+        <button id="submit" disabled>🔍 Analisar Trecho</button>
     </div>
 </div>
+<meta charset="UTF-8">
+<div id="result">Aguarde enquanto processamos o arquivo...</div>
+<!-- Contêiner onde a tabela será inserida -->
+<div id="tabela-resultados"></div>
+<div id="tabela-resultados_fft"></div>
+
 
 <style>
     /* Botão de gravação */
@@ -68,6 +74,8 @@
         const cutButton = document.getElementById("cutButton");
 
         wavesurfer = initializeWaveSurfer("#waveform");
+        fftPlot.style.display = "none";
+        fftPlotly.style.display = "none";
 
         const resetRecordingState = () => {
             if (mediaStream) {
@@ -121,6 +129,7 @@
                         cutButton.disabled = false;
                         createInitialRegion();
                     });
+                    submit.disabled = false;
                 };
 
                 mediaRecorder.start();
@@ -149,6 +158,98 @@
         // Controles de edição
         playRegionButton.addEventListener("click", playRegion);
         cutButton.addEventListener("click", cutAudio);
-    });
+
+        // parte de análise
+        const submit = document.getElementById("submit");
+
+        submit.addEventListener("click", async () => {
+            if (!region) {
+                alert("Por favor, selecione uma região para analisar.");
+                return;
+            }
+
+            const originalBuffer = wavesurfer.backend.buffer;
+            const startSample = Math.floor(region.start * originalBuffer.sampleRate);
+            const endSample = Math.floor(region.end * originalBuffer.sampleRate);
+            const cutSamples = endSample - startSample;
+
+            if (cutSamples <= 0) {
+                alert("Região inválida.");
+                return;
+            }
+
+            const newBuffer = wavesurfer.backend.ac.createBuffer(
+                originalBuffer.numberOfChannels,
+                cutSamples,
+                originalBuffer.sampleRate
+            );
+
+            for (let channel = 0; channel < originalBuffer.numberOfChannels; channel++) {
+                const channelData = originalBuffer.getChannelData(channel);
+                newBuffer.copyToChannel(channelData.subarray(startSample, endSample), channel);
+            }
+
+            const offlineContext = new OfflineAudioContext(
+                newBuffer.numberOfChannels,
+                newBuffer.length,
+                newBuffer.sampleRate
+            );
+
+            const source = offlineContext.createBufferSource();
+            source.buffer = newBuffer;
+            source.connect(offlineContext.destination);
+            source.start();
+
+            const renderedBuffer = await offlineContext.startRendering();
+            const wavBlob = bufferToWave(renderedBuffer);
+            const wavFile = new File([wavBlob], "trecho.wav", { type: "audio/wav" });
+
+            const formData = new FormData();
+            formData.append("file", wavFile);
+
+            const response = await fetch("/start-analysis", {
+                method: "POST",
+                body: formData,
+            });
+
+            const resultDiv = document.getElementById("result");
+            const fftPlot = document.getElementById("fft-plot");
+            const fftPlotly = document.getElementById("fft-plotly");
+
+            if (response.ok) {
+                const data = await response.json();
+
+                resultDiv.innerHTML = `<p>Jitter (local): ${data.localJitter}</p>
+                                        <p>Shimmer (local): ${data.localShimmer}</p>
+                                        <p>F0: ${data.fundamental_frequency}</p>
+                                        <p>HNR: ${data.hnr}</p>`;
+
+                fftPlot.style.display = "block";
+                fftPlotly.style.display = "block";
+
+                const results2 = [
+                    { metrica: "Jitter (ppq5)", valor: data.jitter },
+                    { metrica: "Shimmer (apq3)", valor: data.shimmer },
+                    { metrica: "Frequência Fundamental (Hz)", valor: data.fundamental_frequency },
+                    { metrica: "HNR", valor: data.hnr }
+                ];
+                criarTabela_fft(results2);
+
+                const results = data.frequencies.map((freq, i) => ({
+                    freq: freq.toFixed(2),
+                    amp: data.amplitudes[i].toFixed(2)
+                }));
+                criarTabela(results);
+
+            } else {
+                const err = await response.json();
+                resultDiv.innerHTML = `<p>Erro: ${err.detail}</p>`;
+            }
+        });
+            });
 </script>
+<img id="fft-plot" src="/fft-plot" alt="FFT Plot" style="display:none; margin-top: 20px;">
+<iframe id="fft-plotly" src="/static/assets/grafico_interativo.html" width="100%" height="500px" frameborder="0"></iframe>
+<!-- SEMPRE DEIXE AQUI NO FINAL -->
+<script src="/static/app.js"></script>
 {% endblock %}
