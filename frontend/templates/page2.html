@@ -219,19 +219,19 @@
             if (response.ok) {
                 const data = await response.json();
 
-                resultDiv.innerHTML = `<p>Jitter (local): ${data.localJitter}</p>
-                                        <p>Jitter (local, absolute): ${data.localabsoluteJitter}</p>
-                                        <p>Jitter (rap): ${data.rapJitter}</p>
-                                        <p>Jitter (ppq5): ${data.ppq5Jitter}</p>
-                                        <p>Jitter (ddp): ${data.ddpJitter}</p>
-                                        <p>Shimmer (local): ${data.localShimmer}</p>
-                                        <p>Shimmer (local, dB): ${data.localdbShimmer}</p>
-                                        <p>Shimmer (apq3): ${data.apq3Shimmer}</p>
-                                        <p>Shimmer (apq5): ${data.apq5Shimmer}</p>
-                                        <p>Shimmer (apq11): ${data.apq11Shimmer}</p>
-                                        <p>Shimmer (dda): ${data.ddaShimmer}</p>
-                                        <p>Fundamental Frequency: ${data.fundamental_frequency}</p>
-                                        <p>HNR: ${data.hnr}</p>`;
+                resultDiv.innerHTML = `<p>Jitter (local): ${data.localJitter.toFixed(4)}</p>
+                                        <p>Jitter (local, absolute): ${data.localabsoluteJitter.toFixed(4)}</p>
+                                        <p>Jitter (rap): ${data.rapJitter.toFixed(4)}</p>
+                                        <p>Jitter (ppq5): ${data.ppq5Jitter.toFixed(4)}</p>
+                                        <p>Jitter (ddp): ${data.ddpJitter.toFixed(4)}</p>
+                                        <p>Shimmer (local): ${data.localShimmer.toFixed(4)}</p>
+                                        <p>Shimmer (local, dB): ${data.localdbShimmer.toFixed(4)}</p>
+                                        <p>Shimmer (apq3): ${data.apq3Shimmer.toFixed(4)}</p>
+                                        <p>Shimmer (apq5): ${data.apq5Shimmer.toFixed(4)}</p>
+                                        <p>Shimmer (apq11): ${data.apq11Shimmer.toFixed(4)}</p>
+                                        <p>Shimmer (dda): ${data.ddaShimmer.toFixed(4)}</p>
+                                        <p>Fundamental Frequency: ${data.fundamental_frequency.toFixed(4)}</p>
+                                        <p>HNR: ${data.hnr.toFixed(4)}</p>`;
 
                 fftPlot.style.display = "block";
                 fftPlotly.style.display = "block";
