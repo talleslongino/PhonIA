@@ -92,7 +92,7 @@
       Ao prosseguir, você concorda que os dados de áudio enviados serão utilizados exclusivamente para fins de análise e pesquisa. Nenhum dado será compartilhado com terceiros sem sua autorização.
     </p>
     <div id="termo_pdf">
-      <a href="#" id="open-pdf-link">📄 Ler Termo Completo</a>
+      <a href="#" id="open-pdf-link">Ler Termo Completo</a>
     </div>
     <label>
       <input type="checkbox" id="consent-checkbox">
@@ -104,6 +104,7 @@
   <div id="popup-overlay"></div>
   <div id="user-info-popup">
     <h3>Informe seus dados para realizar cadastro na plataforma:</h3>
+    <input type="text" id="username" placeholder="Usuário para Login (máx 8 Caracteres Ex: abcd1234)"><br><br>
     <input type="text" id="email" placeholder="E-mail"><br><br>
     <input type="text" id="problem" placeholder="Possui Diagnóstico de Patologia Vocal? (Sim/Não)"><br><br>
     <input type="text" id="trata" placeholder="Faz Algum Tratamento? (Sim/Não)"><br><br>
@@ -149,6 +150,7 @@
     });
 
       submitUserInfo.addEventListener("click", () => {
+      const username = document.getElementById("username").value;
       const email = document.getElementById("email").value;
       const problem = document.getElementById("problem").value;
       const trata = document.getElementById("trata").value;
@@ -157,20 +159,42 @@
       const voz_trabalho = document.getElementById("voz_trabalho").value;
       const pais = document.getElementById("pais").value;
 
-      if (!email || !problem || !trata  || !age || !occupation  || !voz_trabalho  || !pais) {
+      if (!username || !email || !problem || !trata  || !age || !occupation  || !voz_trabalho  || !pais) {
         alert("Por favor, preencha todos os campos.");
         return;
       }
 
       // Aqui você pode salvar os dados localmente ou enviar para o backend
-      const userInfo = { email, problem, trata, age, occupation, voz_trabalho, pais }
+      const userInfo = {username, email, problem, trata, age, occupation, voz_trabalho, pais }
       console.log(userInfo);
 
       // Armazena dados no local storage para utilizar em outras partes do código
       localStorage.setItem("consentGiven", "true");
       localStorage.setItem("userInfo", JSON.stringify(userInfo));
+
+      // Atualiza o cabeçalho (se já estiver visível)
+      console.log("Salvando dados e tentando atualizar o cabeçalho...");
+      const userDisplay = document.getElementById("user-display");
+      if (userDisplay) {
+        userDisplay.textContent = `Usuário ${username}`;
+        console.log("Cabeçalho atualizado com o username:", username);
+      } else {
+        console.warn("Elemento #user-display não encontrado no DOM.");
+      }
+      atualizarCabecalhoUsuario();
+
       sessionStorage.removeItem("pendingRedirect");
-      window.location.href = redirectTo;
+      // Atualiza visualmente
+      //////////window.location.href = redirectTo;
+      // Adiciona um pequeno atraso antes de redirecionar
+      setTimeout(() => {
+                          window.location.href = redirectTo;
+                        }, 300);
+      // Atualizar cabeçalho imediatamente
+      if (typeof atualizarCabecalhoUsuario === "function") {
+        atualizarCabecalhoUsuario();
+      }
+      console.log("Atualizando cabeçalho após consentimento. Dados:", userInfo);
     });
 
     // Leitura do PDF

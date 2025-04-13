@@ -24,6 +24,7 @@
         <img src="/static/assets/logo.png" alt="Logotipo" class="logo">
         <img src="/static/assets/phonIA_logo.png" alt="Logotipo" class="logo">
         <nav>
+            <span id="user-display" style="margin-right: 15px; font-weight: bold; color: navy;"></span>
             <a href="/">Início</a> |
             <a href="/page1">Carregar</a> |
             <a href="/page2">Gravar</a> |
@@ -38,6 +39,16 @@
     <footer>
         <p>&copy; 2025 PhonIA WebApp</p>
     </footer>
+    <script>
+      function atualizarCabecalhoUsuario() {
+        const userData = JSON.parse(localStorage.getItem("userInfo") || "{}");
+        const username = userData.username || "não logado";
+        const userDisplay = document.getElementById("user-display");
+        if (userDisplay) userDisplay.textContent = `Usuário ${username}`;
+      }
+
+      document.addEventListener("DOMContentLoaded", atualizarCabecalhoUsuario);
+    </script>
 </body>
 <link rel="manifest" href="/static/assets/manifest.json">
 </html>

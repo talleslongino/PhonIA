@@ -1,5 +1,5 @@
 # --- adapters/web.py ---
-from fastapi import FastAPI, UploadFile, HTTPException, Request, File
+from fastapi import FastAPI, UploadFile, HTTPException, Request, Body
 from fastapi.responses import JSONResponse, HTMLResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
@@ -7,6 +7,8 @@ from application.services import AudioAnalysisService
 from domain.audio_analysis import AudioAnalyzer
 from fastapi.templating import Jinja2Templates
 import os
+import json
+from utils.logger import logger
 
 
 # Configurando os templates
@@ -41,7 +43,18 @@ async def get_service_worker():
 
 
 @app.post("/start-analysis")
-async def start_analysis(file: UploadFile):
+async def start_analysis(file: UploadFile, request: Request):
+    logger.info(f"Recebido arquivo: {file.filename}")
+    user_info = request.headers.get("x-user-info")
+    user_id = None
+    if user_info:
+        try:
+            user_data = json.loads(user_info)
+            user_id = service.save_user_info(user_data)
+            logger.info(f"Dados do usuário salvos. ID: {user_id}")
+        except Exception as e:
+             logger.warning(f"Falha ao salvar usuário: {e}")
+
     if not file.filename.endswith(".wav"):
         raise HTTPException(status_code=400, detail="Only .wav files are supported")
 
@@ -51,9 +64,12 @@ async def start_analysis(file: UploadFile):
             f.write(await file.read())
 
         result = service.analyze_audio_file(file_path)
+        service._save_to_database(result, user_id=user_id)
+        logger.info("Resultado da análise retornado.")
         return JSONResponse(content=result.dict())
 
     except Exception as e:
+        logger.error(f"Erro ao processar áudio: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
     finally:
@@ -74,6 +90,15 @@ async def upload_audio(file: UploadFile):
     with open(f"uploaded_audio/{file.filename}", "wb") as audio_file:
         audio_file.write(await file.read())
     return {"filename": file.filename}
+
+
+# @app.post("/user-info")
+# async def save_user_info(user_data: dict = Body(...)):
+#     try:
+#         user_id = service.save_user_info(user_data)
+#         return {"user_id": user_id}
+#     except Exception as e:
+#         raise HTTPException(status_code=500, detail=str(e))
 
 
 # Home Page
@@ -104,6 +129,7 @@ async def page3(request: Request):
 @app.get("/page4", response_class=HTMLResponse)
 async def page4(request: Request):
     return templates.TemplateResponse("page4.html", {"request": request})
+
 
 # Página Termo de Consentimento
 @app.get("/consent", response_class=HTMLResponse)

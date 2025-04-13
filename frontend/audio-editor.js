@@ -70,7 +70,9 @@ async function cutAudio() {
         const channelData = originalBuffer.getChannelData(channel);
         newBuffer.copyToChannel(channelData.subarray(startSample, endSample), channel);
     }
-
+    console.log(`🎧 Corte de áudio realizado`);
+    console.log(`⏱️ Duração original: ${(originalBuffer.duration).toFixed(2)}s`);
+    console.log(`✂️ Duração cortada: ${(cutSamples / originalBuffer.sampleRate).toFixed(2)}s`);
     await exportAudioBuffer(newBuffer);
 }
 

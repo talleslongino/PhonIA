@@ -29,10 +29,15 @@ if (form) {
 
         // Envia o arquivo para análise e exibe os resultados
         try {
+            const userInfo = localStorage.getItem("userInfo") || "{}"; // Carrega dados do usuário
+
             const response = await fetch("/start-analysis", {
                 method: "POST",
                 body: formData,
-            });
+                headers: {
+                            "x-user-info": userInfo
+                        }
+                });
 
             if (response.ok) {
                 const data = await response.json();

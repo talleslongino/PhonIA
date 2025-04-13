@@ -18,7 +18,7 @@ class AudioAnalysisResult(BaseModel):
     rapJitter: float
     ppq5Jitter: float
     ddpJitter: float
-    shimmer: float # remover depois
+    shimmer: float  # remover depois
     localShimmer: float
     localdbShimmer: float
     apq3Shimmer: float
@@ -33,8 +33,8 @@ class AudioAnalysisResult(BaseModel):
 
 
 class AudioAnalyzer:
-    audio_input: str =''
-    audio_norm: str =''
+    audio_input: str = ''
+    audio_norm: str = ''
 
     def analyze(self, audio_path: str) -> AudioAnalysisResult:
         try:
@@ -55,19 +55,19 @@ class AudioAnalyzer:
             ddpJitter = call(pointProcess, "Get jitter (ddp)", 0, 0, 0.0001, 0.02, 1.3) * 100
 
             # Shimmer PARAMS
-            localShimmer =  call([sound, pointProcess], "Get shimmer (local)", 0, 0, 0.0001, 0.02, 1.3, 1.6) * 100
+            localShimmer = call([sound, pointProcess], "Get shimmer (local)", 0, 0, 0.0001, 0.02, 1.3, 1.6) * 100
             localdbShimmer = call([sound, pointProcess], "Get shimmer (local_dB)", 0, 0, 0.0001, 0.02, 1.3, 1.6)
             apq3Shimmer = call([sound, pointProcess], "Get shimmer (apq3)", 0, 0, 0.0001, 0.02, 1.3, 1.6) * 100
             apq5Shimmer = call([sound, pointProcess], "Get shimmer (apq5)", 0, 0, 0.0001, 0.02, 1.3, 1.6) * 100
             apq11Shimmer = call([sound, pointProcess], "Get shimmer (apq11)", 0, 0, 0.0001, 0.02, 1.3, 1.6) * 100
             ddaShimmer = call([sound, pointProcess], "Get shimmer (dda)", 0, 0, 0.0001, 0.02, 1.3, 1.6) * 100
 
- # remover depois
+            # remover depois
             # Jitter (ppq5) calculation
             jitter = call(pointProcess, "Get jitter (ppq5)", 0, 0, 0.0001, 0.02, 1.3) * 100
             # parselmouth.praat.call(pointProcess, "Get jitter (local)", 0, 0, 0.0001, 0.02, 1.3)#, 0.0001, 0.02, 0.02, 1.3)
 
- # remover depois
+            # remover depois
             # Shimmer (apq3) calculation
             shimmer = call([sound, pointProcess], "Get shimmer (apq3)", 0, 0, 0.0001, 0.02, 1.3, 1.6) * 100
             # parselmouth.praat.call([sound, pointProcess], "Get shimmer (local)", 0, 0, 0.0001, 0.02, 1.3, 1.6)#, 0.0001, 0.02, 0.02, 1.3)
@@ -84,25 +84,24 @@ class AudioAnalyzer:
             # Calcular Harmonics-to-Noise Ratio (HNR)
             hnr = call(harmonicity, "Get mean", 0, 0)
 
-
             top_freq = self.calculate_fft(audio_path)
 
             return AudioAnalysisResult(
-                jitter=jitter,
-                localJitter=localJitter,
-                localabsoluteJitter=localabsoluteJitter,
-                rapJitter=rapJitter,
-                ppq5Jitter=ppq5Jitter,
-                ddpJitter=ddpJitter,
-                shimmer=shimmer,
-                localShimmer=localShimmer,
-                localdbShimmer=localdbShimmer,
-                apq3Shimmer=apq3Shimmer,
-                apq5Shimmer=apq5Shimmer,
-                apq11Shimmer=apq11Shimmer,
-                ddaShimmer=ddaShimmer,
-                fundamental_frequency=f0,
-                hnr=hnr,
+                jitter=round(jitter, 6),
+                localJitter=round(localJitter, 6),
+                localabsoluteJitter=round(localabsoluteJitter, 6),
+                rapJitter=round(rapJitter, 6),
+                ppq5Jitter=round(ppq5Jitter, 6),
+                ddpJitter=round(ddpJitter, 6),
+                shimmer=round(shimmer, 6),
+                localShimmer=round(localShimmer, 6),
+                localdbShimmer=round(localdbShimmer, 6),
+                apq3Shimmer=round(apq3Shimmer, 6),
+                apq5Shimmer=round(apq5Shimmer, 6),
+                apq11Shimmer=round(apq11Shimmer, 6),
+                ddaShimmer=round(ddaShimmer, 6),
+                fundamental_frequency=round(f0, 6),
+                hnr=round(hnr, 6),
                 frequencies=top_freq["frequencies"],
                 amplitudes=top_freq["amplitudes"]
             )
@@ -187,22 +186,22 @@ class AudioAnalyzer:
             title=dict(text="Gráfico Interativo - FFT do Sinal de Áudio e Maiores Picos",
                        x=0.5, xanchor="center",
                        font=dict(family="Arial, sans-serif", size=20, color="black", weight="bold")),
-            xaxis_title=dict(text="Frequência (Hz)",font=dict(size=16, color="black", weight="bold")),
-            yaxis_title=dict(text="Amplitude",font=dict(size=16, color="black", weight="bold")),
+            xaxis_title=dict(text="Frequência (Hz)", font=dict(size=16, color="black", weight="bold")),
+            yaxis_title=dict(text="Amplitude", font=dict(size=16, color="black", weight="bold")),
             xaxis=dict(tickfont=dict(size=12, weight="bold")),
             yaxis=dict(tickfont=dict(size=12, weight="bold")),
-            plot_bgcolor='whitesmoke', #determina a cor do fundo
-            template='plotly_white', #"plotly_dark"  # Opção de tema
+            plot_bgcolor='whitesmoke',  # determina a cor do fundo
+            template='plotly_white',  # "plotly_dark"  # Opção de tema
             legend=dict(x=0.5, y=1.1, xanchor="center", orientation="h")
         )
 
         # Determina a cor do eixo x e a cor do grid
         fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='gray',
-        showline=True, linewidth=1, linecolor='black')
+                         showline=True, linewidth=1, linecolor='black')
 
         # Determina a cor do eixo y e a cor do grid
         fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='gray',
-        showline=True, linewidth=1, linecolor='black')
+                         showline=True, linewidth=1, linecolor='black')
 
         # Salvar como HTML
         fig.write_html("frontend/assets/grafico_interativo.html")
@@ -238,12 +237,10 @@ class AudioAnalyzer:
         normalized_audio.export(name_norm, format="wav")
         return name_norm
 
-
-
-    def insert_after_end_name(self, original:str) -> str:
+    def insert_after_end_name(self, original: str) -> str:
         """ Inserts a string '_normalized' after the first dot in `original`."""
         if "." in original:
             index = original.find(".")  # Find the index of the .wav
-            return original[:index] + '_normalized' + original[index :]  # Insert after dot
+            return original[:index] + '_normalized' + original[index:]  # Insert after dot
         else:
             raise ValueError("The original string does not contain an dot ('.')!!!")
