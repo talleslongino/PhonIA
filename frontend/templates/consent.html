@@ -15,6 +15,13 @@
       box-shadow: 0 0 10px rgba(0,0,0,0.3);
       z-index: 1000;
     }
+    #user-info-popup input {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 10px;
+      box-sizing: border-box;
+    }
+
     #popup-overlay {
       display: none;
       position: fixed;
@@ -25,6 +32,58 @@
       background: rgba(0,0,0,0.5);
       z-index: 999;
     }
+        #pdf-popup {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background-color: rgba(0,0,0,0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+
+    #pdf-content {
+      background: white;
+      padding: 20px 20px 10px;
+      border-radius: 8px;
+      width: 90%;
+      max-width: 800px;
+      position: relative;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    }
+
+    #close-pdf {
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      font-size: 28px;
+      color: red;
+      font-weight: bold;
+      cursor: pointer;
+      z-index: 10000;
+    }
+
+    #close-pdf:hover {
+      color: darkred;
+    }
+
+    #pdf-frame-wrapper {
+      margin-top: 40px; /* espaço para não sobrepor o X */
+    }
+
+    #close-pdf-btn {
+      padding: 8px 16px;
+      background-color: #e74c3c;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    #close-pdf-btn:hover {
+      background-color: #c0392b;
+    }
   </style>
 <body>
   <div class="container">
@@ -32,6 +91,9 @@
     <p>
       Ao prosseguir, você concorda que os dados de áudio enviados serão utilizados exclusivamente para fins de análise e pesquisa. Nenhum dado será compartilhado com terceiros sem sua autorização.
     </p>
+    <div id="termo_pdf">
+      <a href="#" id="open-pdf-link">📄 Ler Termo Completo</a>
+    </div>
     <label>
       <input type="checkbox" id="consent-checkbox">
       Eu li e concordo com os termos de consentimento.
@@ -42,12 +104,26 @@
   <div id="popup-overlay"></div>
   <div id="user-info-popup">
     <h3>Informe seus dados para realizar cadastro na plataforma:</h3>
-    <input type="text" id="numero" placeholder="Número Registro"><br><br>
-    <input type="text" id="problem" placeholder="Problema Diagnosticado? (Sim/Não)"><br><br>
-    <input type="text" id="trata" placeholder="Faz Tratamento? (Sim/Não)"><br><br>
+    <input type="text" id="email" placeholder="E-mail"><br><br>
+    <input type="text" id="problem" placeholder="Possui Diagnóstico de Patologia Vocal? (Sim/Não)"><br><br>
+    <input type="text" id="trata" placeholder="Faz Algum Tratamento? (Sim/Não)"><br><br>
     <input type="text" id="age" placeholder="Idade"><br><br>
     <input type="text" id="occupation" placeholder="Profissão"><br><br>
+    <input type="text" id="voz_trabalho" placeholder="Utiliza a Voz como Ferramenta de Trabalho? (Sim/Não)"><br><br>
+    <input type="text" id="pais" placeholder="País de Nascimento (Ex: Brasil, Portugal)"><br><br>
     <button id="submit-user-info">Enviar</button>
+  </div>
+
+  <div id="pdf-popup" style="display: none;">
+    <div id="pdf-content">
+      <span id="close-pdf" title="Fechar PDF">✖</span>
+      <div id="pdf-frame-wrapper">
+        <iframe src="/static/assets/termo_consentimento.pdf" width="100%" height="500px" style="border: none;"></iframe>
+      </div>
+      <div style="text-align: right; margin-top: 10px;">
+        <button id="close-pdf-btn">Fechar</button>
+      </div>
+    </div>
   </div>
   <script>
     // Reseta o consentimento toda vez que o app inicia
@@ -73,24 +149,43 @@
     });
 
       submitUserInfo.addEventListener("click", () => {
-      const numero = document.getElementById("numero").value;
+      const email = document.getElementById("email").value;
       const problem = document.getElementById("problem").value;
       const trata = document.getElementById("trata").value;
       const age = document.getElementById("age").value;
       const occupation = document.getElementById("occupation").value;
+      const voz_trabalho = document.getElementById("voz_trabalho").value;
+      const pais = document.getElementById("pais").value;
 
-      if (!numero || !problem || !trata  || !age || !occupation) {
+      if (!email || !problem || !trata  || !age || !occupation  || !voz_trabalho  || !pais) {
         alert("Por favor, preencha todos os campos.");
         return;
       }
 
       // Aqui você pode salvar os dados localmente ou enviar para o backend
-      console.log({ numero, problem, trata, age, occupation });
+      const userInfo = { email, problem, trata, age, occupation, voz_trabalho, pais }
+      console.log(userInfo);
 
+      // Armazena dados no local storage para utilizar em outras partes do código
       localStorage.setItem("consentGiven", "true");
+      localStorage.setItem("userInfo", JSON.stringify(userInfo));
       sessionStorage.removeItem("pendingRedirect");
       window.location.href = redirectTo;
     });
-</script>
+
+    // Leitura do PDF
+    document.getElementById("open-pdf-link").addEventListener("click", (e) => {
+    e.preventDefault();
+    document.getElementById("pdf-popup").style.display = "flex";
+    });
+
+    document.getElementById("close-pdf").addEventListener("click", () => {
+    document.getElementById("pdf-popup").style.display = "none";
+    });
+
+    document.getElementById("close-pdf-btn").addEventListener("click", () => {
+    document.getElementById("pdf-popup").style.display = "none";
+    });
+  </script>
 </body>
 {% endblock %}

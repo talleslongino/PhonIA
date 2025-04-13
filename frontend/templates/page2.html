@@ -22,7 +22,7 @@
     </div>
 </div>
 <meta charset="UTF-8">
-<div id="result">Aguarde enquanto processamos o arquivo...</div>
+<!--<div id="result">Aguarde enquanto processamos o arquivo...</div> -->
 <!-- Contêiner onde a tabela será inserida -->
 <div id="tabela-resultados"></div>
 <div id="tabela-resultados_fft"></div>
@@ -68,6 +68,7 @@
     let mediaStream;
 
     document.addEventListener("DOMContentLoaded", () => {
+        const usuario = JSON.parse(localStorage.getItem("userInfo")); // Carrega dados do usuário
         const recordButton = document.getElementById("recordButton");
         const stopButton = document.getElementById("stopButton");
         const playRegionButton = document.getElementById("playRegionButton");

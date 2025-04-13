@@ -15,7 +15,7 @@
     <button type="button" id="analyzeSelectionBtn" disabled>🔍 Analisar Trecho</button>
 </form>
 
-<div id="result">Aguarde enquanto processamos o arquivo...</div>
+<!--<div id="result">Aguarde enquanto processamos o arquivo...</div> -->
 <div id="waveform" style="margin-top: 20px;"></div>
 
 <div class="audio-controls">
@@ -30,6 +30,7 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", () => {
+        const usuario = JSON.parse(localStorage.getItem("userInfo")); // Carrega dados do usuário
         const audioFileInput = document.getElementById("audio-file");
         const loadButton = document.getElementById("loadButton");
         const uploadForm = document.getElementById("upload-form");
