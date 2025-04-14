@@ -30,6 +30,8 @@ class AudioAnalysisResult(BaseModel):
     hnr: float
     frequencies: list
     amplitudes: list
+    original_path:str
+    analyzed_path:str
 
 
 class AudioAnalyzer:
@@ -86,6 +88,8 @@ class AudioAnalyzer:
 
             top_freq = self.calculate_fft(audio_path)
 
+            print("\n \n","Audio input:",self.audio_input)
+            print("\n \n","Audio Norm:",self.audio_norm)
             return AudioAnalysisResult(
                 jitter=round(jitter, 6),
                 localJitter=round(localJitter, 6),
@@ -103,7 +107,9 @@ class AudioAnalyzer:
                 fundamental_frequency=round(f0, 6),
                 hnr=round(hnr, 6),
                 frequencies=top_freq["frequencies"],
-                amplitudes=top_freq["amplitudes"]
+                amplitudes=top_freq["amplitudes"],
+                original_path=self.audio_input,
+                analyzed_path=self.audio_norm
             )
 
         except Exception as e:

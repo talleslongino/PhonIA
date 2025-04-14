@@ -1,5 +1,5 @@
 # --- adapters/web.py ---
-from fastapi import FastAPI, UploadFile, HTTPException, Request, Body
+from fastapi import FastAPI, UploadFile, HTTPException, Request
 from fastapi.responses import JSONResponse, HTMLResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware

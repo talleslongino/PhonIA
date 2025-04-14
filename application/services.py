@@ -3,6 +3,7 @@ from domain.audio_analysis import AudioAnalyzer, AudioAnalysisResult
 import sqlite3
 from typing import Optional
 from utils.logger import logger
+from datetime import datetime
 
 
 class AudioAnalysisService:
@@ -32,6 +33,9 @@ class AudioAnalysisService:
                                 ddaShimmer REAL,
                                 fundamental_frequency REAL,
                                 hnr REAL,
+                                timestamp TEXT,
+                                audio_original BLOB,
+                                audio_analisado BLOB,
                                 FOREIGN KEY (user_id) REFERENCES users(id)
                             )
                         """)
@@ -54,12 +58,22 @@ class AudioAnalysisService:
     def _save_to_database(self, result: AudioAnalysisResult, user_id: Optional[int] = None):
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
+
+        # Carregar os arquivos binários
+        with open(result.original_path, "rb") as f:
+            original_blob = f.read()
+
+        with open(result.analyzed_path, "rb") as f:
+            analyzed_blob = f.read()
+
+            timestamp = datetime.now().isoformat()
+
         cursor.execute("""
             INSERT INTO ANALISE (user_id, localJitter, localabsoluteJitter, rapJitter, 
             ppq5Jitter, ddpJitter, localShimmer, localdbShimmer, apq3Shimmer, apq5Shimmer, 
-            apq11Shimmer, ddaShimmer, fundamental_frequency, hnr)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """, (
+            apq11Shimmer, ddaShimmer, fundamental_frequency, hnr, timestamp, audio_original, audio_analisado)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """, (
             user_id,
             result.localJitter,
             result.localabsoluteJitter,
@@ -73,10 +87,14 @@ class AudioAnalysisService:
             result.apq11Shimmer,
             result.ddaShimmer,
             result.fundamental_frequency,
-            result.hnr
+            result.hnr,
+            timestamp,
+            original_blob,
+            analyzed_blob
         ))
         conn.commit()
         conn.close()
+        logger.info(f"🧠 Análise salva com timestamp {timestamp}")
 
     def save_user_info(self, user_data: dict) -> int:
         conn = sqlite3.connect(self.db_path)
