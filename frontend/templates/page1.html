@@ -142,19 +142,19 @@
         fftPlot.style.display = "block";
         fftPlotly.style.display = "block";
 
-        const results2 = [
-            { metrica: "Jitter (ppq5)", valor: data.jitter },
-            { metrica: "Shimmer (apq3)", valor: data.shimmer },
-            { metrica: "Frequência Fundamental (Hz)", valor: data.fundamental_frequency },
-            { metrica: "HNR", valor: data.hnr }
-        ];
-        criarTabela_fft(results2);
-
         const results = data.frequencies.map((freq, i) => ({
             freq: freq.toFixed(2),
             amp: data.amplitudes[i].toFixed(2)
         }));
-        criarTabela(results);
+
+        const results2 = [
+            { metrica: "Jitter (ppq5)", valor: data.jitter, unid: "%" },
+            { metrica: "Shimmer (apq3)", valor: data.shimmer,unid: "%" },
+            { metrica: "Frequência Fundamental (Hz)", valor: data.fundamental_frequency, unid: "Hz" },
+            { metrica: "HNR", valor: data.hnr, unid: "%" }
+        ];
+        criarTabela_fft(results);
+        criarTabela(results2);
 
     } else {
         const err = await response.json();

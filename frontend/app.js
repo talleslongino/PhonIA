@@ -101,10 +101,43 @@ if (form) {
 
         // Função para criar e inserir a tabela
         function criarTabela(dados) {
+            // Cabeçalho da tabela
             // Cria o elemento da tabela
             const tabela = document.createElement("table");
 
             // Cabeçalho da tabela
+            const thead = document.createElement("thead");
+            thead.innerHTML = `
+                <tr>
+                    <th>Parâmetro</th>
+                    <th>Valor</th>
+                    <th>Unidade</th>
+                </tr>
+            `;
+            tabela.appendChild(thead);
+
+            // Corpo da tabela
+            const tbody = document.createElement("tbody");
+            dados.forEach((item) => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${item.metrica}</td>
+                    <td>${item.valor}</td>
+                    <td>${item.unid}</td>
+                `;
+                tbody.appendChild(row);
+            });
+            tabela.appendChild(tbody);
+
+            // Insere a tabela no contêiner
+            document.getElementById("tabela-resultados").appendChild(tabela);
+        }
+
+                // Função para criar e inserir a tabela
+        function criarTabela_fft(dados) {
+            // Cria o elemento da tabela
+            const tabela = document.createElement("table");
+
             const thead = document.createElement("thead");
             thead.innerHTML = `
                 <tr>
@@ -121,37 +154,6 @@ if (form) {
                 row.innerHTML = `
                     <td>${item.freq}</td>
                     <td>${item.amp}</td>
-                `;
-                tbody.appendChild(row);
-            });
-            tabela.appendChild(tbody);
-
-            // Insere a tabela no contêiner
-            document.getElementById("tabela-resultados").appendChild(tabela);
-        }
-
-                // Função para criar e inserir a tabela
-        function criarTabela_fft(dados) {
-            // Cria o elemento da tabela
-            const tabela = document.createElement("table");
-
-            // Cabeçalho da tabela
-            const thead = document.createElement("thead");
-            thead.innerHTML = `
-                <tr>
-                    <th>Métrica2</th>
-                    <th>Valor2</th>
-                </tr>
-            `;
-            tabela.appendChild(thead);
-
-            // Corpo da tabela
-            const tbody = document.createElement("tbody");
-            dados.forEach((item) => {
-                const row = document.createElement("tr");
-                row.innerHTML = `
-                    <td>${item.metrica}</td>
-                    <td>${item.valor}</td>
                 `;
                 tbody.appendChild(row);
             });
