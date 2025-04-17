@@ -224,7 +224,6 @@
 
             if (response.ok) {
                 const data = await response.json();
-
                 resultDiv.innerHTML = `<p>Jitter (local): ${data.localJitter.toFixed(4)}</p>
                                         <p>Jitter (local, absolute): ${data.localabsoluteJitter.toFixed(4)}</p>
                                         <p>Jitter (rap): ${data.rapJitter.toFixed(4)}</p>
@@ -238,23 +237,31 @@
                                         <p>Shimmer (dda): ${data.ddaShimmer.toFixed(4)}</p>
                                         <p>Fundamental Frequency: ${data.fundamental_frequency.toFixed(4)}</p>
                                         <p>HNR: ${data.hnr.toFixed(4)}</p>`;
-
-                fftPlot.style.display = "block";
+<!--                fftPlot.style.display = "block";-->
                 fftPlotly.style.display = "block";
 
-                const results2 = [
-                    { metrica: "Jitter (ppq5)", valor: data.jitter },
-                    { metrica: "Shimmer (apq3)", valor: data.shimmer },
-                    { metrica: "Frequência Fundamental (Hz)", valor: data.fundamental_frequency },
-                    { metrica: "HNR", valor: data.hnr }
-                ];
-                criarTabela_fft(results2);
-
                 const results = data.frequencies.map((freq, i) => ({
-                    freq: freq.toFixed(2),
-                    amp: data.amplitudes[i].toFixed(2)
-                }));
-                criarTabela(results);
+            freq: freq.toFixed(2),
+            amp: data.amplitudes[i].toFixed(2)
+        }));
+
+                 const results2 = [
+                    { metrica: "Jitter (local)" , valor: data.localJitter.toFixed(4), unid: "%" },
+                    { metrica: "Jitter (local, absolute)", valor: data.localabsoluteJitter.toFixed(4), unid: "s" },
+                    { metrica: "Jitter (rap)", valor: data.rapJitter.toFixed(4), unid: "%" },
+                    { metrica: "Jitter (ppq5)", valor: data.ppq5Jitter.toFixed(4), unid: "%" },
+                    { metrica: "Jitter (ddp)", valor: data.ddpJitter.toFixed(4), unid: "%" },
+                    { metrica: "Shimmer (local)", valor: data.localShimmer.toFixed(4), unid: "%" },
+                    { metrica: "Shimmer (local, dB)", valor: data.localdbShimmer.toFixed(4), unid: "dB" },
+                    { metrica: "Shimmer (apq3)", valor: data.apq3Shimmer.toFixed(4), unid: "%" },
+                    { metrica: "Shimmer (apq5)", valor: data.apq5Shimmer.toFixed(4), unid: "%" },
+                    { metrica: "Shimmer (apq11)", valor: data.apq11Shimmer.toFixed(4), unid: "%" },
+                    { metrica: "Shimmer (dda)", valor: data.ddaShimmer.toFixed(4), unid: "%" },
+                    { metrica: "Fundamental Frequency", valor: data.fundamental_frequency.toFixed(4), unid: "Hz" },
+                    { metrica: "HNR", valor: data.hnr.toFixed(4), unid: "--" }
+            ];
+            criarTabela_fft(results);
+            criarTabela(results2);
 
             } else {
                 const err = await response.json();
