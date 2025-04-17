@@ -51,7 +51,7 @@ class AudioAnalysisService:
     def analyze_audio_file(self, file_path: str) -> AudioAnalysisResult:
         logger.info(f"Analisando áudio: {file_path}")
         result = self.analyzer.analyze(file_path)
-        self._save_to_database(result)
+        # self._save_to_database(result)
         logger.info("Análise concluída com sucesso.")
         return result
 
