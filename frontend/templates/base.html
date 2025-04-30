@@ -40,6 +40,25 @@
         <p>&copy; 2025 PhonIA WebApp</p>
     </footer>
     <script>
+      function logoutUser() {
+        console.log("🧹 Limpando sessão do usuário...");
+
+        // Remover consentimento e dados do usuário
+        localStorage.removeItem("consentGiven");
+        localStorage.removeItem("userInfo");
+        localStorage.removeItem("authToken");
+
+        // Remover redirecionamentos pendentes
+        sessionStorage.clear();
+
+        // Opcional: resetar cabeçalho (se quiser feedback visual)
+        const display = document.getElementById("user-display");
+        if (display) display.textContent = "Usuário N/D";
+
+        // Redirecionar para home e forçar reload
+        window.location.href = "/";
+      }
+
       function atualizarCabecalhoUsuario() {
         const userData = JSON.parse(localStorage.getItem("userInfo") || "{}");
         const username = userData.username || "não logado";
