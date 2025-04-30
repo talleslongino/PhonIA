@@ -21,6 +21,20 @@
       border-radius: 8px;
       text-align: left;
     }
+    /* Close button styling */
+  #close-user-info {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    font-size: 20px;
+    font-weight: bold;
+    color: red;
+    cursor: pointer;
+    z-index: 1001;
+  }
+#close-user-info:hover {
+  color: darkred;
+}
     #popup-overlay {
       display: none;
       position: fixed;
@@ -131,6 +145,8 @@
   </div>
   <div id="popup-overlay"></div>
   <div id="user-info-popup">
+  <!-- Botão de fechar -->
+  <span id="close-user-info" title="Fechar">×</span>
     <h3>Dados de Anamnese Vocal</h3>
     <!-- Dados Demográficos -->
     <label>Usuário (máx 8 caracteres):
@@ -230,6 +246,16 @@
     const overlay = document.getElementById("popup-overlay");
     const popup = document.getElementById("user-info-popup");
     const submitUserInfo = document.getElementById("submit-user-info");
+    // Obtém botão fechar
+    const closeBtn = document.getElementById("close-user-info");
+
+    // Fecha o popup sem enviar
+    closeBtn.addEventListener("click", () => {
+      overlay.style.display = "none";
+      popup.style.display = "none";
+      checkbox.checked = false;
+      button.disabled = true;
+    });
     const redirectTo = sessionStorage.getItem("pendingRedirect") || "/";
     checkbox.addEventListener("change", () => { button.disabled = !checkbox.checked; });
     button.addEventListener("click", () => { overlay.style.display = "block"; popup.style.display = "block"; });
