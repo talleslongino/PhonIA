@@ -10,18 +10,17 @@
       left: 50%;
       transform: translate(-50%, -50%);
       background: #fff;
-      padding:50px;
+      padding: 20px;
       border: 1px solid #ccc;
       box-shadow: 0 0 10px rgba(0,0,0,0.3);
       z-index: 1000;
+      width: 90%;
+      max-width: 400px;
+      max-height: 80vh;
+      overflow-y: auto;
+      border-radius: 8px;
+      text-align: left;
     }
-    #user-info-popup input {
-      width: 100%;
-      padding: 8px;
-      margin-bottom: 10px;
-      box-sizing: border-box;
-    }
-
     #popup-overlay {
       display: none;
       position: fixed;
@@ -32,7 +31,7 @@
       background: rgba(0,0,0,0.5);
       z-index: 999;
     }
-        #pdf-popup {
+    #pdf-popup {
       position: fixed;
       top: 0; left: 0;
       width: 100%; height: 100%;
@@ -42,17 +41,15 @@
       justify-content: center;
       z-index: 9999;
     }
-
     #pdf-content {
       background: white;
-      padding: 20px 20px 10px;
+      padding: 20px;
       border-radius: 8px;
       width: 90%;
       max-width: 800px;
       position: relative;
       box-shadow: 0 4px 8px rgba(0,0,0,0.3);
     }
-
     #close-pdf {
       position: absolute;
       top: 10px;
@@ -63,15 +60,12 @@
       cursor: pointer;
       z-index: 10000;
     }
-
     #close-pdf:hover {
       color: darkred;
     }
-
     #pdf-frame-wrapper {
-      margin-top: 40px; /* espaço para não sobrepor o X */
+      margin-top: 40px;
     }
-
     #close-pdf-btn {
       padding: 8px 16px;
       background-color: #e74c3c;
@@ -80,9 +74,43 @@
       border-radius: 5px;
       cursor: pointer;
     }
-
     #close-pdf-btn:hover {
       background-color: #c0392b;
+    }
+    /* Labels and inputs styling inside popup */
+    #user-info-popup label {
+      display: block;
+      margin-bottom: 16px;
+      font-size: 14px;
+      font-weight: bold;
+      text-align: left;
+    }
+    #user-info-popup input[type="text"],
+    #user-info-popup input[type="email"],
+    #user-info-popup input[type="number"] {
+      width: 100%;
+      padding: 6px;
+      margin-top: 4px;
+      box-sizing: border-box;
+      font-size: 14px;
+    }
+    #user-info-popup input[type="radio"] {
+      margin-right: 4px;
+    }
+    #submit-user-info {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      margin-top: 24px;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    #submit-user-info:hover {
+      background-color: #2980b9;
     }
   </style>
 <body>
@@ -103,15 +131,86 @@
   </div>
   <div id="popup-overlay"></div>
   <div id="user-info-popup">
-    <h3>Informe seus dados para realizar cadastro na plataforma:</h3>
-    <input type="text" id="username" placeholder="Usuário para Login (máx 8 Caracteres Ex: abcd1234)"><br><br>
-    <input type="text" id="email" placeholder="E-mail"><br><br>
-    <input type="text" id="problem" placeholder="Possui Diagnóstico de Patologia Vocal? (Sim/Não)"><br><br>
-    <input type="text" id="trata" placeholder="Faz Algum Tratamento? (Sim/Não)"><br><br>
-    <input type="text" id="age" placeholder="Idade"><br><br>
-    <input type="text" id="occupation" placeholder="Profissão"><br><br>
-    <input type="text" id="voz_trabalho" placeholder="Utiliza a Voz como Ferramenta de Trabalho? (Sim/Não)"><br><br>
-    <input type="text" id="pais" placeholder="País de Nascimento (Ex: Brasil, Portugal)"><br><br>
+    <h3>Dados de Anamnese Vocal</h3>
+    <!-- Dados Demográficos -->
+    <label>Usuário (máx 8 caracteres):
+      <input type="text" id="username" maxlength="8" placeholder="abcd1234" required>
+    </label>
+    <label>Email:
+      <input type="email" id="email" placeholder="seu@exemplo.com" required>
+    </label>
+    <label>Idade:
+      <input type="number" id="age" min="0" placeholder="Idade" required>
+    </label>
+    <label>Gênero:</label>
+    <label><input type="radio" name="gender" value="Masculino" required> Masculino</label>
+    <label><input type="radio" name="gender" value="Feminino"> Feminino</label>
+    <label><input type="radio" name="gender" value="Outro"> Outro</label>
+    <label><input type="radio" name="gender" value="Prefiro não dizer"> Prefiro não dizer</label>
+    <label>Língua materna:
+      <input type="text" id="native_language" placeholder="Português, Inglês..." required>
+    </label>
+    <label>País de origem:
+      <input type="text" id="country_origin" placeholder="Brasil, Portugal..." required>
+    </label>
+    <label>Nível de escolaridade:</label>
+    <label><input type="radio" name="education_level" value="Ensino básico" required> Ensino básico</label>
+    <label><input type="radio" name="education_level" value="Ensino médio/secundário"> Ensino médio/secundário</label>
+    <label><input type="radio" name="education_level" value="Ensino superior"> Ensino superior</label>
+
+    <!-- Saúde e Histórico Vocal -->
+    <label>Tem doença respiratória ou condição que afete a voz?</label>
+    <label><input type="radio" name="resp_condition" value="Não" required> Não</label>
+    <label><input type="radio" name="resp_condition" value="Sim"> Sim
+    <input type="text" id="resp_condition_details" placeholder="Se sim, especifique"></label>
+
+    <label>Tem desconforto ao falar ou alteração na voz?</label>
+    <label><input type="radio" name="voice_discomfort" value="Não" required> Não</label>
+    <label><input type="radio" name="voice_discomfort" value="Sim"> Sim
+    <input type="text" id="voice_discomfort_details" placeholder="Se sim, especifique"></label>
+
+    <label>Já fez terapia da fala?</label>
+    <label><input type="radio" name="speech_therapy" value="Não" required> Não</label>
+    <label><input type="radio" name="speech_therapy" value="Sim"> Sim</label>
+
+    <label>Já teve problema vocal diagnosticado?</label>
+    <label><input type="radio" name="diagnosed_vocal_problem" value="Não" required> Não</label>
+    <label><input type="radio" name="diagnosed_vocal_problem" value="Sim"> Sim
+    <input type="text" id="diagnosed_vocal_problem_details" placeholder="Se sim, especifique"></label>
+
+    <label>Faz uso de medicamento hormonal ou diurético?</label>
+    <label><input type="radio" name="hormonal_medication" value="Não" required> Não</label>
+    <label><input type="radio" name="hormonal_medication" value="Sim"> Sim
+    <input type="text" id="hormonal_medication_details" placeholder="Se sim, especifique"></label>
+
+    <label>Fuma ou já fumou?</label>
+    <label><input type="radio" name="smoking" value="Não" required> Não</label>
+    <label><input type="radio" name="smoking" value="Sim"> Sim
+    <input type="text" id="smoking_years" placeholder="Se sim, há quantos anos?"></label>
+
+    <label>Consome bebidas alcoólicas regularmente?</label>
+    <label><input type="radio" name="alcohol" value="Não" required> Não</label>
+    <label><input type="radio" name="alcohol" value="Sim"> Sim</label>
+
+    <!-- Uso da Voz -->
+    <label>Profissão ou ocupação:
+      <input type="text" id="occupation" placeholder="Ex: Professor, Ator..." required>
+    </label>
+    <label>Sua profissão exige uso intenso da voz?</label>
+    <label><input type="radio" name="voice_use_intense" value="Não" required> Não</label>
+    <label><input type="radio" name="voice_use_intense" value="Sim"> Sim</label>
+
+    <label>Costuma cantar regularmente?</label>
+    <label><input type="radio" name="singing" value="Não" required> Não</label>
+    <label><input type="radio" name="singing" value="Sim"> Sim
+    <input type="text" id="singing_frequency" placeholder="Se sim, com que frequência?"></label>
+
+    <label>Quanto tempo fala por dia?</label>
+    <label><input type="radio" name="daily_speaking_time" value="Menos de 1 hora" required> Menos de 1 hora</label>
+    <label><input type="radio" name="daily_speaking_time" value="1-3 horas"> 1-3 horas</label>
+    <label><input type="radio" name="daily_speaking_time" value="3-5 horas"> 3-5 horas</label>
+    <label><input type="radio" name="daily_speaking_time" value="Mais de 5 horas"> Mais de 5 horas</label>
+
     <button id="submit-user-info">Enviar</button>
   </div>
 
@@ -121,95 +220,39 @@
       <div id="pdf-frame-wrapper">
         <iframe src="/static/assets/termo_consentimento.pdf" width="100%" height="500px" style="border: none;"></iframe>
       </div>
-      <div style="text-align: right; margin-top: 10px;">
-        <button id="close-pdf-btn">Fechar</button>
-      </div>
+      <div style="text-align: right; margin-top: 10px;"></div>
     </div>
   </div>
   <script>
-    // Reseta o consentimento toda vez que o app inicia
     localStorage.removeItem("consentGiven");
-
     const checkbox = document.getElementById("consent-checkbox");
     const button = document.getElementById("continue-btn");
     const overlay = document.getElementById("popup-overlay");
     const popup = document.getElementById("user-info-popup");
     const submitUserInfo = document.getElementById("submit-user-info");
     const redirectTo = sessionStorage.getItem("pendingRedirect") || "/";
-
-    checkbox.addEventListener("change", () => {
-      button.disabled = !checkbox.checked;
-    });
-
-    button.addEventListener("click", () => {
-      // Exibe o popup de dados do usuário
-      overlay.style.display = "block";
-      popup.style.display = "block";
-<!--      localStorage.setItem("consentGiven", "true");-->
-<!--      window.location.href = "/";-->
-    });
-
-      submitUserInfo.addEventListener("click", () => {
-      const username = document.getElementById("username").value;
-      const email = document.getElementById("email").value;
-      const problem = document.getElementById("problem").value;
-      const trata = document.getElementById("trata").value;
-      const age = document.getElementById("age").value;
-      const occupation = document.getElementById("occupation").value;
-      const voz_trabalho = document.getElementById("voz_trabalho").value;
-      const pais = document.getElementById("pais").value;
-
-      if (!username || !email || !problem || !trata  || !age || !occupation  || !voz_trabalho  || !pais) {
-        alert("Por favor, preencha todos os campos.");
-        return;
+    checkbox.addEventListener("change", () => { button.disabled = !checkbox.checked; });
+    button.addEventListener("click", () => { overlay.style.display = "block"; popup.style.display = "block"; });
+    submitUserInfo.addEventListener("click", () => {
+      const requiredFields = ["username","email","age","occupation"];
+      for (let f of requiredFields) {
+        if (!document.getElementById(f).value) {
+          alert("Por favor, preencha todos os campos obrigatórios.");
+          return;
+        }
       }
-
-      // Aqui você pode salvar os dados localmente ou enviar para o backend
-      const userInfo = {username, email, problem, trata, age, occupation, voz_trabalho, pais }
-      console.log(userInfo);
-
-      // Armazena dados no local storage para utilizar em outras partes do código
-      localStorage.setItem("consentGiven", "true");
+      const userInfo = {};
+      [...document.querySelectorAll("#user-info-popup input")].forEach(i => {
+        if (i.name && i.type === "radio" && i.checked) userInfo[i.name] = i.value;
+        else if (i.id && i.type !== "radio") userInfo[i.id] = i.value;
+      });
+      localStorage.setItem("consentGiven","true");
       localStorage.setItem("userInfo", JSON.stringify(userInfo));
-
-      // Atualiza o cabeçalho (se já estiver visível)
-      console.log("Salvando dados e tentando atualizar o cabeçalho...");
-      const userDisplay = document.getElementById("user-display");
-      if (userDisplay) {
-        userDisplay.textContent = `Usuário ${username}`;
-        console.log("Cabeçalho atualizado com o username:", username);
-      } else {
-        console.warn("Elemento #user-display não encontrado no DOM.");
-      }
-      atualizarCabecalhoUsuario();
-
-      sessionStorage.removeItem("pendingRedirect");
-      // Atualiza visualmente
-      //////////window.location.href = redirectTo;
-      // Adiciona um pequeno atraso antes de redirecionar
-      setTimeout(() => {
-                          window.location.href = redirectTo;
-                        }, 300);
-      // Atualizar cabeçalho imediatamente
-      if (typeof atualizarCabecalhoUsuario === "function") {
-        atualizarCabecalhoUsuario();
-      }
-      console.log("Atualizando cabeçalho após consentimento. Dados:", userInfo);
+      setTimeout(() => { window.location.href = redirectTo; }, 300);
     });
-
-    // Leitura do PDF
-    document.getElementById("open-pdf-link").addEventListener("click", (e) => {
-    e.preventDefault();
-    document.getElementById("pdf-popup").style.display = "flex";
-    });
-
-    document.getElementById("close-pdf").addEventListener("click", () => {
-    document.getElementById("pdf-popup").style.display = "none";
-    });
-
-    document.getElementById("close-pdf-btn").addEventListener("click", () => {
-    document.getElementById("pdf-popup").style.display = "none";
-    });
+    document.getElementById("open-pdf-link").addEventListener("click", e => { e.preventDefault(); document.getElementById("pdf-popup").style.display = "flex"; });
+    document.getElementById("close-pdf").addEventListener("click", () => { document.getElementById("pdf-popup").style.display = "none"; });
+    document.getElementById("close-pdf-btn").addEventListener("click", () => { document.getElementById("pdf-popup").style.display = "none"; });
   </script>
 </body>
 {% endblock %}
