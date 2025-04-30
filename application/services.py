@@ -103,27 +103,59 @@ class AudioAnalysisService:
             CREATE TABLE IF NOT EXISTS USUARIO (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 username TEXT,
-                email TEXT,
-                problem TEXT,
-                trata TEXT,
+                email TEXT, 
                 age TEXT,
+                gender TEXT,
+                native_language TEXT,
+                country_origin TEXT,
+                education_level TEXT,
+                resp_condition TEXT,
+                resp_condition_details TEXT,
+                voice_discomfort TEXT,
+                voice_discomfort_details TEXT,
+                speech_therapy TEXT,
+                diagnosed_vocal_problem TEXT,
+                diagnosed_vocal_problem_details TEXT,
+                hormonal_medication TEXT,
+                hormonal_medication_details TEXT,
+                smoking TEXT,
+                smoking_years TEXT,
+                alcohol TEXT,
                 occupation TEXT,
-                voz_trabalho TEXT,
-                pais TEXT
+                voice_use_intense TEXT,
+                singing TEXT,
+                singing_frequency TEXT,
+                daily_speaking_time TEXT
             )
         """)
         cursor.execute("""
-            INSERT INTO USUARIO (username, email, problem, trata, age, occupation, voz_trabalho, pais)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO USUARIO (username, email, age, gender, native_language, country_origin, education_level, resp_condition, resp_condition_details, voice_discomfort, voice_discomfort_details, speech_therapy, diagnosed_vocal_problem, diagnosed_vocal_problem_details, hormonal_medication, hormonal_medication_details, smoking, smoking_years, alcohol, occupation, voice_use_intense, singing, singing_frequency, daily_speaking_time)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """, (
                     user_data.get("username"),
                     user_data.get("email"),
-                    user_data.get("problem"),
-                    user_data.get("trata"),
                     user_data.get("age"),
+                    user_data.get("gender"),
+                    user_data.get("native_language"),
+                    user_data.get("country_origin"),
+                    user_data.get("education_level"),
+                    user_data.get("resp_condition"),
+                    user_data.get("resp_condition_details"),
+                    user_data.get("voice_discomfort"),
+                    user_data.get("voice_discomfort_details"),
+                    user_data.get("speech_therapy"),
+                    user_data.get("diagnosed_vocal_problem"),
+                    user_data.get("diagnosed_vocal_problem_details"),
+                    user_data.get("hormonal_medication"),
+                    user_data.get("hormonal_medication_details"),
+                    user_data.get("smoking"),
+                    user_data.get("smoking_years"),
+                    user_data.get("alcohol"),
                     user_data.get("occupation"),
-                    user_data.get("voz_trabalho"),
-                    user_data.get("pais")
+                    user_data.get("voice_use_intense"),
+                    user_data.get("singing"),
+                    user_data.get("singing_frequency"),
+                    user_data.get("daily_speaking_time")
                 ))
         user_id = cursor.lastrowid
         conn.commit()
