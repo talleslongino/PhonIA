@@ -1,0 +1,272 @@
+2025-04-13 01:38:13,412 | INFO | Tabela 'analysis' verificada/criada.
+2025-04-13 01:38:52,807 | INFO | Tabela 'analysis' verificada/criada.
+2025-04-13 01:39:10,021 | INFO | Tabela 'analysis' verificada/criada.
+2025-04-13 01:42:18,032 | INFO | Tabela 'analysis' verificada/criada.
+2025-04-13 01:42:49,756 | INFO | Tabela 'analysis' verificada/criada.
+2025-04-13 01:43:58,435 | INFO | Tabela 'analysis' verificada/criada.
+2025-04-13 01:48:47,150 | INFO | Tabela 'analysis' verificada/criada.
+2025-04-13 01:49:19,426 | INFO | Tabela 'analysis' verificada/criada.
+2025-04-13 01:49:36,325 | INFO | Tabela 'analysis' verificada/criada.
+2025-04-13 01:50:23,510 | INFO | Tabela 'analysis' verificada/criada.
+2025-04-13 01:58:44,395 | INFO | Tabela 'analysis' verificada/criada.
+2025-04-13 02:00:09,061 | INFO | Tabela 'ANALISE' verificada/criada.
+2025-04-13 02:00:28,466 | INFO | Recebido arquivo: trecho_selecionado.wav
+2025-04-13 02:00:29,280 | INFO | Dados do usuário salvos. ID: 1
+2025-04-13 02:00:29,281 | INFO | Analisando áudio: uploads\trecho_selecionado.wav
+2025-04-13 02:00:30,634 | INFO | Análise concluída com sucesso.
+2025-04-13 02:00:30,784 | INFO | Resultado da análise retornado.
+2025-04-13 02:11:46,193 | INFO | Tabela 'ANALISE' verificada/criada.
+2025-04-13 02:20:05,186 | INFO | Tabela 'ANALISE' verificada/criada.
+2025-04-13 02:21:06,577 | INFO | Tabela 'ANALISE' verificada/criada.
+2025-04-13 02:21:38,250 | INFO | Tabela 'ANALISE' verificada/criada.
+2025-04-13 02:22:17,739 | ERROR | Erro ao inicializar DB: name 'original_path' is not defined
+2025-04-13 02:24:41,870 | ERROR | Erro ao inicializar DB: name 'original_path' is not defined
+2025-04-13 02:25:43,462 | INFO | Tabela 'ANALISE' verificada/criada.
+2025-04-13 02:26:22,574 | INFO | Tabela 'ANALISE' verificada/criada.
+2025-04-13 02:29:15,920 | INFO | Tabela 'ANALISE' verificada/criada.
+2025-04-13 02:29:32,638 | INFO | Tabela 'ANALISE' verificada/criada.
+2025-04-13 02:31:33,312 | INFO | Tabela 'ANALISE' verificada/criada.
+2025-04-13 02:31:42,819 | INFO | Tabela 'ANALISE' verificada/criada.
+2025-04-13 02:32:44,654 | INFO | Tabela 'ANALISE' verificada/criada.
+2025-04-13 02:35:00,502 | INFO | Tabela 'ANALISE' verificada/criada.
+2025-04-13 02:35:54,190 | INFO | Recebido arquivo: trecho_selecionado.wav
+2025-04-13 02:35:54,534 | INFO | Dados do usuário salvos. ID: 1
+2025-04-13 02:35:54,535 | INFO | Analisando áudio: uploads\trecho_selecionado.wav
+2025-04-13 02:35:55,413 | ERROR | Erro ao processar áudio: expected str, bytes or os.PathLike object, not NoneType
+2025-04-13 02:39:07,035 | INFO | Recebido arquivo: trecho_selecionado.wav
+2025-04-13 02:39:07,258 | INFO | Dados do usuário salvos. ID: 2
+2025-04-13 02:39:07,259 | INFO | Analisando áudio: uploads\trecho_selecionado.wav
+2025-04-13 02:39:07,886 | ERROR | Erro ao processar áudio: expected str, bytes or os.PathLike object, not NoneType
+2025-04-13 23:07:49,535 | INFO | Tabela 'ANALISE' verificada/criada.
+2025-04-13 23:49:14,761 | INFO | Tabela 'ANALISE' verificada/criada.
+2025-04-13 23:50:25,476 | INFO | Recebido arquivo: trecho_selecionado.wav
+2025-04-13 23:50:25,858 | INFO | Dados do usuário salvos. ID: 1
+2025-04-13 23:50:25,859 | INFO | Analisando áudio: uploads\trecho_selecionado.wav
+2025-04-13 23:50:33,583 | ERROR | Erro ao processar áudio: too many values to unpack (expected 2)
+2025-04-13 23:53:04,554 | INFO | Tabela 'ANALISE' verificada/criada.
+2025-04-13 23:54:59,061 | INFO | Tabela 'ANALISE' verificada/criada.
+2025-04-13 23:55:16,963 | INFO | Recebido arquivo: trecho_selecionado.wav
+2025-04-13 23:55:17,159 | INFO | Dados do usuário salvos. ID: 2
+2025-04-13 23:55:17,160 | INFO | Analisando áudio: uploads\trecho_selecionado.wav
+2025-04-13 23:55:18,598 | INFO | Análise concluída com sucesso.
+2025-04-13 23:55:18,598 | ERROR | Erro ao processar áudio: too many values to unpack (expected 2)
+2025-04-13 23:55:18,600 | INFO | Recebido arquivo: trecho_selecionado.wav
+2025-04-13 23:55:18,757 | INFO | Dados do usuário salvos. ID: 3
+2025-04-13 23:55:18,758 | INFO | Analisando áudio: uploads\trecho_selecionado.wav
+2025-04-13 23:55:19,397 | INFO | Análise concluída com sucesso.
+2025-04-13 23:55:19,398 | ERROR | Erro ao processar áudio: too many values to unpack (expected 2)
+2025-04-13 23:58:09,443 | INFO | Tabela 'ANALISE' verificada/criada.
+2025-04-13 23:58:39,639 | INFO | Recebido arquivo: trecho_selecionado.wav
+2025-04-13 23:58:39,808 | INFO | Dados do usuário salvos. ID: 4
+2025-04-13 23:58:39,809 | INFO | Analisando áudio: uploads\trecho_selecionado.wav
+2025-04-13 23:58:41,359 | INFO | Análise concluída com sucesso.
+2025-04-13 23:58:41,724 | INFO | Resultado da análise retornado.
+2025-04-14 00:02:39,836 | INFO | Recebido arquivo: trecho_selecionado.wav
+2025-04-14 00:02:40,162 | INFO | Dados do usuário salvos. ID: 1
+2025-04-14 00:02:40,163 | INFO | Analisando áudio: uploads\trecho_selecionado.wav
+2025-04-14 00:02:40,851 | ERROR | Erro ao processar áudio: no such table: ANALISE
+2025-04-14 00:03:02,283 | INFO | Recebido arquivo: trecho_selecionado.wav
+2025-04-14 00:03:02,463 | INFO | Dados do usuário salvos. ID: 2
+2025-04-14 00:03:02,464 | INFO | Analisando áudio: uploads\trecho_selecionado.wav
+2025-04-14 00:03:03,076 | ERROR | Erro ao processar áudio: no such table: ANALISE
+2025-04-14 00:03:18,508 | INFO | Recebido arquivo: trecho_selecionado.wav
+2025-04-14 00:03:19,293 | INFO | Dados do usuário salvos. ID: 3
+2025-04-14 00:03:19,294 | INFO | Analisando áudio: uploads\trecho_selecionado.wav
+2025-04-14 00:03:19,944 | ERROR | Erro ao processar áudio: no such table: ANALISE
+2025-04-14 00:06:27,065 | INFO | Tabela 'ANALISE' verificada/criada.
+2025-04-16 22:21:56,422 | INFO | Tabela 'ANALISE' verificada/criada.
+2025-04-16 22:45:31,190 | INFO | Tabela 'ANALISE' verificada/criada.
+2025-04-16 22:47:04,423 | INFO | Recebido arquivo: trecho_selecionado.wav
+2025-04-16 22:47:04,554 | INFO | Dados do usuário salvos. ID: 4
+2025-04-16 22:47:04,556 | INFO | Analisando áudio: uploads\trecho_selecionado.wav
+2025-04-16 22:47:13,693 | INFO | Análise concluída com sucesso.
+2025-04-16 22:47:14,084 | INFO | Resultado da análise retornado.
+2025-04-16 22:47:24,881 | INFO | Tabela 'ANALISE' verificada/criada.
+2025-04-16 22:52:55,569 | INFO | Recebido arquivo: trecho.wav
+2025-04-16 22:52:55,776 | INFO | Dados do usuário salvos. ID: 5
+2025-04-16 22:52:55,778 | INFO | Analisando áudio: uploads\trecho.wav
+2025-04-16 22:52:57,619 | INFO | Análise concluída com sucesso.
+2025-04-16 22:52:57,915 | INFO | Resultado da análise retornado.
+2025-04-16 22:55:30,439 | INFO | Tabela 'ANALISE' verificada/criada.
+2025-04-16 23:01:05,111 | INFO | Tabela 'ANALISE' verificada/criada.
+2025-04-16 23:05:38,163 | INFO | Recebido arquivo: trecho_selecionado.wav
+2025-04-16 23:05:39,081 | INFO | Dados do usuário salvos. ID: 6
+2025-04-16 23:05:39,082 | INFO | Analisando áudio: uploads\trecho_selecionado.wav
+2025-04-16 23:05:40,059 | INFO | Análise concluída com sucesso.
+2025-04-16 23:05:40,295 | INFO | Resultado da análise retornado.
+2025-04-16 23:15:40,398 | INFO | Recebido arquivo: trecho_selecionado.wav
+2025-04-16 23:15:40,638 | INFO | Dados do usuário salvos. ID: 7
+2025-04-16 23:15:40,639 | INFO | Analisando áudio: uploads\trecho_selecionado.wav
+2025-04-16 23:15:41,065 | INFO | Análise concluída com sucesso.
+2025-04-16 23:15:41,334 | INFO | Resultado da análise retornado.
+2025-04-16 23:17:07,826 | INFO | Recebido arquivo: trecho_selecionado.wav
+2025-04-16 23:17:08,012 | INFO | Dados do usuário salvos. ID: 8
+2025-04-16 23:17:08,013 | INFO | Analisando áudio: uploads\trecho_selecionado.wav
+2025-04-16 23:17:08,453 | INFO | Análise concluída com sucesso.
+2025-04-16 23:17:08,685 | INFO | Resultado da análise retornado.
+2025-04-16 23:18:39,030 | INFO | Recebido arquivo: trecho_selecionado.wav
+2025-04-16 23:18:39,245 | INFO | Dados do usuário salvos. ID: 9
+2025-04-16 23:18:39,246 | INFO | Analisando áudio: uploads\trecho_selecionado.wav
+2025-04-16 23:18:39,817 | INFO | Análise concluída com sucesso.
+2025-04-16 23:18:40,115 | INFO | Resultado da análise retornado.
+2025-04-16 23:38:47,077 | INFO | Recebido arquivo: trecho_selecionado.wav
+2025-04-16 23:38:47,915 | INFO | Dados do usuário salvos. ID: 10
+2025-04-16 23:38:47,916 | INFO | Analisando áudio: uploads\trecho_selecionado.wav
+2025-04-16 23:38:48,338 | INFO | Análise concluída com sucesso.
+2025-04-16 23:38:48,534 | INFO | Resultado da análise retornado.
+2025-04-16 23:45:39,825 | INFO | Recebido arquivo: trecho_selecionado.wav
+2025-04-16 23:45:40,216 | INFO | Dados do usuário salvos. ID: 11
+2025-04-16 23:45:40,217 | INFO | Analisando áudio: uploads\trecho_selecionado.wav
+2025-04-16 23:45:40,781 | INFO | Análise concluída com sucesso.
+2025-04-16 23:45:41,723 | INFO | Resultado da análise retornado.
+2025-04-17 00:10:18,854 | INFO | Recebido arquivo: trecho_selecionado.wav
+2025-04-17 00:10:19,036 | INFO | Dados do usuário salvos. ID: 12
+2025-04-17 00:10:19,038 | INFO | Analisando áudio: uploads\trecho_selecionado.wav
+2025-04-17 00:10:20,042 | INFO | Análise concluída com sucesso.
+2025-04-17 00:10:20,408 | INFO | Resultado da análise retornado.
+2025-04-17 00:21:29,259 | INFO | Recebido arquivo: trecho_selecionado.wav
+2025-04-17 00:21:29,451 | INFO | Dados do usuário salvos. ID: 13
+2025-04-17 00:21:29,452 | INFO | Analisando áudio: uploads\trecho_selecionado.wav
+2025-04-17 00:21:30,103 | INFO | Análise concluída com sucesso.
+2025-04-17 00:21:30,318 | INFO | Resultado da análise retornado.
+2025-04-17 00:25:14,760 | INFO | Recebido arquivo: trecho_selecionado.wav
+2025-04-17 00:25:15,005 | INFO | Dados do usuário salvos. ID: 14
+2025-04-17 00:25:15,005 | INFO | Analisando áudio: uploads\trecho_selecionado.wav
+2025-04-17 00:25:15,562 | INFO | Análise concluída com sucesso.
+2025-04-17 00:25:15,959 | INFO | Resultado da análise retornado.
+2025-04-17 00:26:51,481 | INFO | Recebido arquivo: trecho.wav
+2025-04-17 00:26:51,702 | INFO | Dados do usuário salvos. ID: 15
+2025-04-17 00:26:51,702 | INFO | Analisando áudio: uploads\trecho.wav
+2025-04-17 00:26:52,210 | INFO | Análise concluída com sucesso.
+2025-04-17 00:26:52,447 | INFO | Resultado da análise retornado.
+2025-04-17 00:32:21,726 | INFO | Recebido arquivo: trecho.wav
+2025-04-17 00:32:21,926 | INFO | Dados do usuário salvos. ID: 16
+2025-04-17 00:32:21,927 | INFO | Analisando áudio: uploads\trecho.wav
+2025-04-17 00:32:22,380 | INFO | Análise concluída com sucesso.
+2025-04-17 00:32:22,653 | INFO | Resultado da análise retornado.
+2025-04-17 00:32:22,654 | ERROR | Erro ao processar áudio: Out of range float values are not JSON compliant
+2025-04-17 00:34:01,026 | INFO | Recebido arquivo: trecho.wav
+2025-04-17 00:34:01,242 | INFO | Dados do usuário salvos. ID: 17
+2025-04-17 00:34:01,243 | INFO | Analisando áudio: uploads\trecho.wav
+2025-04-17 00:34:01,581 | INFO | Análise concluída com sucesso.
+2025-04-17 00:34:02,338 | INFO | Resultado da análise retornado.
+2025-04-17 00:34:02,338 | ERROR | Erro ao processar áudio: Out of range float values are not JSON compliant
+2025-04-17 00:34:16,539 | INFO | Recebido arquivo: trecho.wav
+2025-04-17 00:34:17,706 | INFO | Dados do usuário salvos. ID: 18
+2025-04-17 00:34:17,707 | INFO | Analisando áudio: uploads\trecho.wav
+2025-04-17 00:34:18,133 | INFO | Análise concluída com sucesso.
+2025-04-17 00:34:18,363 | INFO | Resultado da análise retornado.
+2025-04-17 00:37:13,629 | INFO | Recebido arquivo: trecho.wav
+2025-04-17 00:37:14,511 | INFO | Dados do usuário salvos. ID: 19
+2025-04-17 00:37:14,512 | INFO | Analisando áudio: uploads\trecho.wav
+2025-04-17 00:37:14,960 | INFO | Análise concluída com sucesso.
+2025-04-17 00:37:15,456 | INFO | Resultado da análise retornado.
+2025-04-17 00:37:15,456 | ERROR | Erro ao processar áudio: Out of range float values are not JSON compliant
+2025-04-17 00:37:29,780 | INFO | Recebido arquivo: trecho_selecionado.wav
+2025-04-17 00:37:29,987 | INFO | Dados do usuário salvos. ID: 20
+2025-04-17 00:37:29,988 | INFO | Analisando áudio: uploads\trecho_selecionado.wav
+2025-04-17 00:37:30,542 | INFO | Análise concluída com sucesso.
+2025-04-17 00:37:30,892 | INFO | Resultado da análise retornado.
+2025-04-17 00:39:38,413 | INFO | Recebido arquivo: trecho_selecionado.wav
+2025-04-17 00:39:39,329 | INFO | Dados do usuário salvos. ID: 21
+2025-04-17 00:39:39,330 | INFO | Analisando áudio: uploads\trecho_selecionado.wav
+2025-04-17 00:39:39,965 | INFO | Análise concluída com sucesso.
+2025-04-17 00:39:40,274 | INFO | Resultado da análise retornado.
+2025-04-17 00:39:57,474 | INFO | Recebido arquivo: trecho.wav
+2025-04-17 00:39:57,707 | INFO | Dados do usuário salvos. ID: 22
+2025-04-17 00:39:57,708 | INFO | Analisando áudio: uploads\trecho.wav
+2025-04-17 00:39:58,394 | INFO | Análise concluída com sucesso.
+2025-04-17 00:39:58,650 | INFO | Resultado da análise retornado.
+2025-04-17 00:40:31,861 | INFO | Recebido arquivo: trecho.wav
+2025-04-17 00:40:32,056 | INFO | Dados do usuário salvos. ID: 23
+2025-04-17 00:40:32,057 | INFO | Analisando áudio: uploads\trecho.wav
+2025-04-17 00:40:32,659 | INFO | Análise concluída com sucesso.
+2025-04-17 00:40:32,963 | INFO | Resultado da análise retornado.
+2025-04-17 00:40:32,963 | ERROR | Erro ao processar áudio: Out of range float values are not JSON compliant
+2025-04-17 00:41:23,023 | INFO | Recebido arquivo: trecho.wav
+2025-04-17 00:41:23,221 | INFO | Dados do usuário salvos. ID: 24
+2025-04-17 00:41:23,222 | INFO | Analisando áudio: uploads\trecho.wav
+2025-04-17 00:41:23,864 | INFO | Análise concluída com sucesso.
+2025-04-17 00:41:24,117 | INFO | Resultado da análise retornado.
+2025-04-17 00:44:18,765 | INFO | Recebido arquivo: trecho.wav
+2025-04-17 00:44:18,921 | INFO | Dados do usuário salvos. ID: 25
+2025-04-17 00:44:18,922 | INFO | Analisando áudio: uploads\trecho.wav
+2025-04-17 00:44:19,682 | INFO | Análise concluída com sucesso.
+2025-04-17 00:44:19,978 | INFO | Resultado da análise retornado.
+2025-04-17 06:00:52,446 | INFO | Tabela 'ANALISE' verificada/criada.
+2025-04-17 06:31:11,632 | INFO | Recebido arquivo: trecho_selecionado.wav
+2025-04-17 06:31:11,837 | INFO | Dados do usuário salvos. ID: 26
+2025-04-17 06:31:11,849 | INFO | Analisando áudio: uploads\trecho_selecionado.wav
+2025-04-17 06:31:19,691 | INFO | Análise concluída com sucesso.
+2025-04-17 06:31:20,534 | INFO | Resultado da análise retornado.
+2025-04-17 06:31:20,540 | INFO | Recebido arquivo: trecho_selecionado.wav
+2025-04-17 06:31:20,812 | INFO | Dados do usuário salvos. ID: 27
+2025-04-17 06:31:20,813 | INFO | Analisando áudio: uploads\trecho_selecionado.wav
+2025-04-17 06:31:22,140 | INFO | Análise concluída com sucesso.
+2025-04-17 06:31:22,451 | INFO | Resultado da análise retornado.
+2025-04-24 05:51:29,600 | INFO | Tabela 'ANALISE' verificada/criada.
+2025-04-29 22:04:03,529 | INFO | Tabela 'ANALISE' verificada/criada.
+2025-04-30 00:34:03,038 | INFO | Tabela 'ANALISE' verificada/criada.
+2025-04-30 00:35:22,357 | INFO | Tabela 'ANALISE' verificada/criada.
+2025-04-30 00:36:56,903 | INFO | Tabela 'ANALISE' verificada/criada.
+2025-04-30 00:38:32,567 | INFO | Tabela 'ANALISE' verificada/criada.
+2025-04-30 00:52:07,484 | INFO | Tabela 'ANALISE' verificada/criada.
+2025-04-30 00:57:03,554 | INFO | Recebido arquivo: trecho_selecionado.wav
+2025-04-30 00:57:03,554 | WARNING | Falha ao salvar usuário: table USUARIO has no column named gender
+2025-04-30 00:57:03,555 | INFO | Analisando áudio: uploads\trecho_selecionado.wav
+2025-04-30 00:57:14,989 | INFO | Análise concluída com sucesso.
+2025-04-30 00:57:15,480 | INFO | Resultado da análise retornado.
+2025-04-30 01:01:36,976 | INFO | Recebido arquivo: trecho_selecionado.wav
+2025-04-30 01:01:37,515 | INFO | Dados do usuário salvos. ID: 1
+2025-04-30 01:01:37,518 | INFO | Analisando áudio: uploads\trecho_selecionado.wav
+2025-04-30 01:01:38,824 | INFO | Análise concluída com sucesso.
+2025-04-30 01:01:38,826 | ERROR | Erro ao processar áudio: no such table: ANALISE
+2025-04-30 01:03:36,371 | INFO | Recebido arquivo: trecho_selecionado.wav
+2025-04-30 01:03:36,560 | INFO | Dados do usuário salvos. ID: 2
+2025-04-30 01:03:36,563 | INFO | Analisando áudio: uploads\trecho_selecionado.wav
+2025-04-30 01:03:37,868 | INFO | Análise concluída com sucesso.
+2025-04-30 01:03:37,871 | ERROR | Erro ao processar áudio: no such table: ANALISE
+2025-04-30 01:04:05,863 | INFO | Recebido arquivo: trecho_selecionado.wav
+2025-04-30 01:04:06,340 | INFO | Dados do usuário salvos. ID: 3
+2025-04-30 01:04:06,341 | INFO | Analisando áudio: uploads\trecho_selecionado.wav
+2025-04-30 01:04:07,559 | INFO | Análise concluída com sucesso.
+2025-04-30 01:04:07,562 | ERROR | Erro ao processar áudio: no such table: ANALISE
+2025-04-30 01:19:41,243 | INFO | aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa Tabela 'ANALISE' vai ser verificada/criada.
+2025-04-30 01:19:41,415 | INFO | Tabela 'ANALISE' verificada/criada.
+2025-04-30 01:20:26,899 | INFO | aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa Tabela 'ANALISE' vai ser verificada/criada.
+2025-04-30 01:20:26,899 | INFO | Tabela 'ANALISE' verificada/criada.
+2025-04-30 01:21:10,179 | INFO | Tabela 'ANALISE' verificada/criada.
+2025-04-30 01:21:10,179 | INFO | Tabela 'ANALISE' verificada/criada.
+2025-04-30 01:22:23,329 | INFO | Recebido arquivo: trecho_selecionado.wav
+2025-04-30 01:22:23,632 | INFO | Dados do usuário salvos. ID: 1
+2025-04-30 01:22:23,633 | INFO | Analisando áudio: uploads\trecho_selecionado.wav
+2025-04-30 01:22:25,193 | INFO | Análise concluída com sucesso.
+2025-04-30 01:22:25,567 | INFO | Resultado da análise retornado.
+2025-04-30 01:36:55,963 | INFO | Recebido arquivo: trecho.wav
+2025-04-30 01:36:56,147 | INFO | Dados do usuário salvos. ID: 2
+2025-04-30 01:36:56,148 | INFO | Analisando áudio: uploads\trecho.wav
+2025-04-30 01:36:56,566 | INFO | Análise concluída com sucesso.
+2025-04-30 01:36:56,801 | INFO | Resultado da análise retornado.
+2025-04-30 06:02:49,503 | INFO | Tabela 'ANALISE' verificada/criada.
+2025-05-07 22:15:41,635 | INFO | Tabela 'ANALISE' verificada/criada.
+2025-05-07 22:33:57,605 | INFO | Recebido arquivo: trecho_selecionado.wav
+2025-05-07 22:33:57,779 | INFO | Dados do usuário salvos. ID: 3
+2025-05-07 22:33:57,782 | INFO | Analisando áudio: uploads\trecho_selecionado.wav
+2025-05-07 22:34:05,150 | INFO | Análise concluída com sucesso.
+2025-05-07 22:34:06,051 | INFO | Resultado da análise retornado.
+2025-05-07 22:37:13,754 | INFO | Recebido arquivo: trecho.wav
+2025-05-07 22:37:13,984 | INFO | Dados do usuário salvos. ID: 4
+2025-05-07 22:37:13,985 | INFO | Analisando áudio: uploads\trecho.wav
+2025-05-07 22:37:14,780 | INFO | Análise concluída com sucesso.
+2025-05-07 22:37:15,040 | INFO | Resultado da análise retornado.
+2025-05-08 05:23:50,307 | INFO | Recebido arquivo: trecho_selecionado.wav
+2025-05-08 05:23:50,472 | INFO | Dados do usuário salvos. ID: 5
+2025-05-08 05:23:50,475 | INFO | Analisando áudio: uploads\trecho_selecionado.wav
+2025-05-08 05:23:52,471 | INFO | Análise concluída com sucesso.
+2025-05-08 05:23:52,800 | INFO | Resultado da análise retornado.
+2025-05-08 05:24:55,132 | INFO | Recebido arquivo: trecho.wav
+2025-05-08 05:24:55,799 | INFO | Dados do usuário salvos. ID: 6
+2025-05-08 05:24:55,801 | INFO | Analisando áudio: uploads\trecho.wav
+2025-05-08 05:24:57,249 | INFO | Análise concluída com sucesso.
+2025-05-08 05:24:57,573 | INFO | Resultado da análise retornado.
+2025-05-19 00:38:23,006 | INFO | Tabela 'ANALISE' verificada/criada.
