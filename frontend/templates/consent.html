@@ -258,33 +258,6 @@
     });
     const redirectTo = sessionStorage.getItem("pendingRedirect") || "/";
     checkbox.addEventListener("change", () => { button.disabled = !checkbox.checked; });
-
-    document.addEventListener("DOMContentLoaded", function () {
-    // Desativa inicialmente todos os campos de justificativa
-    const suffixes = ["_details", "_frequency", "_years"];
-    suffixes.forEach(suffix => {
-      document.querySelectorAll(`[id$='${suffix}']`).forEach(el => {
-        el.disabled = true;
-      });
-    });
-
-    // Adiciona event listener a todos os botões de radio "sim"/"nao"
-    document.querySelectorAll("input[type='radio']").forEach(radio => {
-        radio.addEventListener("change", function () {
-          const name = this.name; // grupo
-          const selectedValue = this.value;
-
-          suffixes.forEach(suffix => {
-            const field = document.getElementById(`${name}${suffix}`);
-            if (field) {
-              field.disabled = (selectedValue !== "sim");
-              if (field.disabled) field.value = ""; // limpa se desativado
-            }
-          });
-        });
-      });
-    });
-
     button.addEventListener("click", () => { overlay.style.display = "block"; popup.style.display = "block"; });
     submitUserInfo.addEventListener("click", () => {
       const requiredFields = ["username","email","age","occupation"];
