@@ -256,6 +256,31 @@
       checkbox.checked = false;
       button.disabled = true;
     });
+    document.addEventListener("DOMContentLoaded", function () {
+      const suffixes = ["_details", "_frequency", "_years"];
+
+      // Desativa todos os campos inicialmente
+      suffixes.forEach(suffix => {
+        document.querySelectorAll(`[id$="${suffix}"]`).forEach(el => el.disabled = true);
+      });
+
+      // Escuta mudanças em todos os inputs de radio
+      document.querySelectorAll("input[type='radio']").forEach(radio => {
+        radio.addEventListener("change", function () {
+          const name = this.name;
+          const value = this.value.toLowerCase(); // normaliza
+
+          suffixes.forEach(suffix => {
+            const field = document.getElementById(`${name}${suffix}`);
+            if (field) {
+              field.disabled = (value !== "sim");
+              if (field.disabled) field.value = "";
+            }
+          });
+        });
+      });
+    });
+
     const redirectTo = sessionStorage.getItem("pendingRedirect") || "/";
     checkbox.addEventListener("change", () => { button.disabled = !checkbox.checked; });
     button.addEventListener("click", () => { overlay.style.display = "block"; popup.style.display = "block"; });
