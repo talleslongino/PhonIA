@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block content %}
+<head>
+    <meta charset="UTF-8">
+    <title>Instruções de Gravação</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <style>
+        .instrucoes {
+            max-width: 700px;
+            margin: 50px auto;
+            text-align: left;
+            padding: 20px;
+            background: #f4f4f4;
+            border-radius: 12px;
+        }
+
+        .instrucoes h2 {
+            text-align: center;
+        }
+
+        .instrucoes ul {
+            margin-top: 20px;
+        }
+
+        .instrucoes li {
+            margin-bottom: 10px;
+        }
+
+        .botoes {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .botoes button {
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="instrucoes">
+        <h2>🗣️ Instruções para Gravação da Voz</h2>
+        <ul>
+            <li>Grave em um local silencioso, sem ruídos de fundo.</li>
+            <li>Mantenha o microfone a cerca de 15-20 cm da boca.</li>
+            <li>Fale normalmente, com tom de voz natural.</li>
+            <li>Evite tossir, pigarrear ou fazer ruídos durante a gravação.</li>
+            <li>Grave uma frase completa ou uma vogal sustentada (ex: “aaaaaa”).</li>
+        </ul>
+        <div class="botoes">
+            <button onclick="window.location.href='/page2'">Gravar Áudio</button>
+            <button onclick="window.location.href='/'">Voltar ao Menu</button>
+        </div>
+    </div>
+</body>
+{% endblock %}
