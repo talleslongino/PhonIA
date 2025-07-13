@@ -137,6 +137,11 @@ async def serve_consent(request: Request):
     return templates.TemplateResponse("consent.html", {"request": request})
 
 
+@app.get("/instructions", response_class=HTMLResponse)
+def instructions(request: Request):
+    return templates.TemplateResponse("instructions.html", {"request": request})
+
+
 @app.get('/favicon.ico', include_in_schema=False)
 async def favicon():
     return FileResponse(favicon_path)
