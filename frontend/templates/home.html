@@ -2,11 +2,13 @@
 
 {% block content %}
 <div class="centered-container">
-    <h2>Ferramenta para Detectar Patologias na Voz</h2>
+    <h2>Ferramenta para Auxiliar a Detectar Patologias na Voz</h2>
     <p>Selecione a opção desejada:</p>
     <div class="button-list">
         <button onclick="location.href='/page1'">Carregar áudio</button>
-        <button onclick="location.href='/page2'">Gravar áudio</button>
+<!--        <button onclick="location.href='/page2'">Gravar áudio</button>-->
+<!--        <button onclick="window.location.href='/instructions'">Carregar/Gravar Áudio</button>-->
+        <button onclick="location.href='/instructions'">Gravar áudio</button>
         <button onclick="location.href='/page3'">Resultados DB</button>
         <button onclick="location.href='/page4'">Tutorial</button>
         <button onclick="localStorage.removeItem('consentGiven'); window.location.href='/consent';">Visualizar Termo</button>
