@@ -64,112 +64,116 @@
         cutButton.addEventListener("click", cutAudio);
     });
 
-    document.getElementById("analyzeSelectionBtn").addEventListener("click", async () => {
-    if (!region) {
-        alert("Por favor, selecione um trecho da gravação.");
-        return;
-    }
+    document.getElementById("analyzeSelectionBtn").addEventListener("click", () => {
+        mostrarAvisoMedico(async () => {
+            if (!region) {
+				alert("Por favor, selecione um trecho da gravação.");
+				return;
+			}
 
-    const originalBuffer = wavesurfer.backend.buffer;
-    const startSample = Math.floor(region.start * originalBuffer.sampleRate);
-    const endSample = Math.floor(region.end * originalBuffer.sampleRate);
-    const cutSamples = endSample - startSample;
+			const originalBuffer = wavesurfer.backend.buffer;
+			const startSample = Math.floor(region.start * originalBuffer.sampleRate);
+			const endSample = Math.floor(region.end * originalBuffer.sampleRate);
+			const cutSamples = endSample - startSample;
 
-    if (cutSamples <= 0) {
-        alert("Trecho inválido.");
-        return;
-    }
+			if (cutSamples <= 0) {
+				alert("Trecho inválido.");
+				return;
+			}
 
-    const newBuffer = wavesurfer.backend.ac.createBuffer(
-        originalBuffer.numberOfChannels,
-        cutSamples,
-        originalBuffer.sampleRate
-    );
+			const newBuffer = wavesurfer.backend.ac.createBuffer(
+				originalBuffer.numberOfChannels,
+				cutSamples,
+				originalBuffer.sampleRate
+			);
 
-    for (let channel = 0; channel < originalBuffer.numberOfChannels; channel++) {
-        const channelData = originalBuffer.getChannelData(channel);
-        newBuffer.copyToChannel(channelData.subarray(startSample, endSample), channel);
-    }
+			for (let channel = 0; channel < originalBuffer.numberOfChannels; channel++) {
+				const channelData = originalBuffer.getChannelData(channel);
+				newBuffer.copyToChannel(channelData.subarray(startSample, endSample), channel);
+			}
 
-    const offlineContext = new OfflineAudioContext(
-        newBuffer.numberOfChannels,
-        newBuffer.length,
-        newBuffer.sampleRate
-    );
+			const offlineContext = new OfflineAudioContext(
+				newBuffer.numberOfChannels,
+				newBuffer.length,
+				newBuffer.sampleRate
+			);
 
-    const source = offlineContext.createBufferSource();
-    source.buffer = newBuffer;
-    source.connect(offlineContext.destination);
-    source.start();
+			const source = offlineContext.createBufferSource();
+			source.buffer = newBuffer;
+			source.connect(offlineContext.destination);
+			source.start();
 
-    const renderedBuffer = await offlineContext.startRendering();
-    const wavBlob = bufferToWave(renderedBuffer);
-    const wavFile = new File([wavBlob], "trecho_selecionado.wav", { type: "audio/wav" });
+			const renderedBuffer = await offlineContext.startRendering();
+			const wavBlob = bufferToWave(renderedBuffer);
+			const wavFile = new File([wavBlob], "trecho_selecionado.wav", { type: "audio/wav" });
 
-    const formData = new FormData();
-    formData.append("file", wavFile);
+			const formData = new FormData();
+			formData.append("file", wavFile);
 
-    const userInfo = localStorage.getItem("userInfo") || "{}"; // Carrega dados do usuário
+			const userInfo = localStorage.getItem("userInfo") || "{}"; // Carrega dados do usuário
 
-    const response = await fetch("/start-analysis", {
-        method: "POST",
-        body: formData,
-        headers: {
-                "x-user-info": userInfo
-                }
+			const response = await fetch("/start-analysis", {
+				method: "POST",
+				body: formData,
+				headers: {
+						"x-user-info": userInfo
+						}
+				});
+
+			const resultDiv = document.getElementById("result");
+			const fftPlot = document.getElementById("fft-plot");
+			const fftPlotly = document.getElementById("fft-plotly");
+
+			if (response.ok) {
+			    mostrarAvisoMedico();
+				const data = await response.json();
+
+				resultDiv.innerHTML = `<p>Jitter (local): ${data.localJitter.toFixed(4)}</p>
+												<p>Jitter (local, absolute): ${data.localabsoluteJitter.toFixed(4)}</p>
+												<p>Jitter (rap): ${data.rapJitter.toFixed(4)}</p>
+												<p>Jitter (ppq5): ${data.ppq5Jitter.toFixed(4)}</p>
+												<p>Jitter (ddp): ${data.ddpJitter.toFixed(4)}</p>
+												<p>Shimmer (local): ${data.localShimmer.toFixed(4)}</p>
+												<p>Shimmer (local, dB): ${data.localdbShimmer.toFixed(4)}</p>
+												<p>Shimmer (apq3): ${data.apq3Shimmer.toFixed(4)}</p>
+												<p>Shimmer (apq5): ${data.apq5Shimmer.toFixed(4)}</p>
+												<p>Shimmer (apq11): ${data.apq11Shimmer.toFixed(4)}</p>
+												<p>Shimmer (dda): ${data.ddaShimmer.toFixed(4)}</p>
+												<p>Fundamental Frequency: ${data.fundamental_frequency.toFixed(4)}</p>
+												<p>HNR: ${data.hnr.toFixed(4)}</p>`;
+		<!--        fftPlot.style.display = "block";-->
+				fftPlotly.style.display = "block";
+
+				const results = data.frequencies.map((freq, i) => ({
+					freq: freq.toFixed(2),
+					amp: data.amplitudes[i].toFixed(2)
+				}));
+
+					 const results2 = [
+						{ metrica: "Jitter (local)" , valor: data.localJitter.toFixed(4), unid: "%" },
+						{ metrica: "Jitter (local, absolute)", valor: data.localabsoluteJitter.toFixed(4), unid: "s" },
+						{ metrica: "Jitter (rap)", valor: data.rapJitter.toFixed(4), unid: "%" },
+						{ metrica: "Jitter (ppq5)", valor: data.ppq5Jitter.toFixed(4), unid: "%" },
+						{ metrica: "Jitter (ddp)", valor: data.ddpJitter.toFixed(4), unid: "%" },
+						{ metrica: "Shimmer (local)", valor: data.localShimmer.toFixed(4), unid: "%" },
+						{ metrica: "Shimmer (local, dB)", valor: data.localdbShimmer.toFixed(4), unid: "dB" },
+						{ metrica: "Shimmer (apq3)", valor: data.apq3Shimmer.toFixed(4), unid: "%" },
+						{ metrica: "Shimmer (apq5)", valor: data.apq5Shimmer.toFixed(4), unid: "%" },
+						{ metrica: "Shimmer (apq11)", valor: data.apq11Shimmer.toFixed(4), unid: "%" },
+						{ metrica: "Shimmer (dda)", valor: data.ddaShimmer.toFixed(4), unid: "%" },
+						{ metrica: "Fundamental Frequency", valor: data.fundamental_frequency.toFixed(4), unid: "Hz" },
+						{ metrica: "HNR", valor: data.hnr.toFixed(4), unid: "--" }
+				];
+				criarTabela_fft(results);
+				criarTabela(results2);
+
+			} else {
+				const err = await response.json();
+				resultDiv.innerHTML = `<p>Erro: ${err.detail}</p>`;
+			}
         });
+    });
 
-    const resultDiv = document.getElementById("result");
-    const fftPlot = document.getElementById("fft-plot");
-    const fftPlotly = document.getElementById("fft-plotly");
-
-    if (response.ok) {
-        const data = await response.json();
-
-        resultDiv.innerHTML = `<p>Jitter (local): ${data.localJitter.toFixed(4)}</p>
-                                        <p>Jitter (local, absolute): ${data.localabsoluteJitter.toFixed(4)}</p>
-                                        <p>Jitter (rap): ${data.rapJitter.toFixed(4)}</p>
-                                        <p>Jitter (ppq5): ${data.ppq5Jitter.toFixed(4)}</p>
-                                        <p>Jitter (ddp): ${data.ddpJitter.toFixed(4)}</p>
-                                        <p>Shimmer (local): ${data.localShimmer.toFixed(4)}</p>
-                                        <p>Shimmer (local, dB): ${data.localdbShimmer.toFixed(4)}</p>
-                                        <p>Shimmer (apq3): ${data.apq3Shimmer.toFixed(4)}</p>
-                                        <p>Shimmer (apq5): ${data.apq5Shimmer.toFixed(4)}</p>
-                                        <p>Shimmer (apq11): ${data.apq11Shimmer.toFixed(4)}</p>
-                                        <p>Shimmer (dda): ${data.ddaShimmer.toFixed(4)}</p>
-                                        <p>Fundamental Frequency: ${data.fundamental_frequency.toFixed(4)}</p>
-                                        <p>HNR: ${data.hnr.toFixed(4)}</p>`;
-<!--        fftPlot.style.display = "block";-->
-        fftPlotly.style.display = "block";
-
-        const results = data.frequencies.map((freq, i) => ({
-            freq: freq.toFixed(2),
-            amp: data.amplitudes[i].toFixed(2)
-        }));
-
-             const results2 = [
-                { metrica: "Jitter (local)" , valor: data.localJitter.toFixed(4), unid: "%" },
-                { metrica: "Jitter (local, absolute)", valor: data.localabsoluteJitter.toFixed(4), unid: "s" },
-                { metrica: "Jitter (rap)", valor: data.rapJitter.toFixed(4), unid: "%" },
-                { metrica: "Jitter (ppq5)", valor: data.ppq5Jitter.toFixed(4), unid: "%" },
-                { metrica: "Jitter (ddp)", valor: data.ddpJitter.toFixed(4), unid: "%" },
-                { metrica: "Shimmer (local)", valor: data.localShimmer.toFixed(4), unid: "%" },
-                { metrica: "Shimmer (local, dB)", valor: data.localdbShimmer.toFixed(4), unid: "dB" },
-                { metrica: "Shimmer (apq3)", valor: data.apq3Shimmer.toFixed(4), unid: "%" },
-                { metrica: "Shimmer (apq5)", valor: data.apq5Shimmer.toFixed(4), unid: "%" },
-                { metrica: "Shimmer (apq11)", valor: data.apq11Shimmer.toFixed(4), unid: "%" },
-                { metrica: "Shimmer (dda)", valor: data.ddaShimmer.toFixed(4), unid: "%" },
-                { metrica: "Fundamental Frequency", valor: data.fundamental_frequency.toFixed(4), unid: "Hz" },
-                { metrica: "HNR", valor: data.hnr.toFixed(4), unid: "--" }
-        ];
-        criarTabela_fft(results);
-        criarTabela(results2);
-
-    } else {
-        const err = await response.json();
-        resultDiv.innerHTML = `<p>Erro: ${err.detail}</p>`;
-    }
-});
 </script>
 <img id="fft-plot" src="/fft-plot" alt="FFT Plot" style="display:none; margin-top: 20px;">
 <iframe id="fft-plotly" src="/static/assets/grafico_interativo.html" width="100%" height="500px" frameborder="0"></iframe>

@@ -30,7 +30,7 @@
 <!--            <a href="/page2">Gravar</a> |-->
             <a href="/instructions">Gravar</a> |
             <a href="/page3">Resultados</a> |
-            <a href="/page4">Tutorial</a> |
+            <a href="/instructions">Tutorial</a> |
             <a href="/consent">Consentimento</a>
             <a href="#" onclick="logoutUser()">Sair</a>
         </nav>
@@ -70,6 +70,33 @@
 
       document.addEventListener("DOMContentLoaded", atualizarCabecalhoUsuario);
     </script>
+
+    <!-- Popup de aviso médico global -->
+    <div id="med-warning-popup" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.7); z-index: 9999; justify-content: center; align-items: center;">
+        <div style="background: white; padding: 20px; border-radius: 12px; text-align: center; max-width: 400px;">
+            <h3>⚠️ Atenção</h3>
+            <p>Esta ferramenta não substitui o diagnóstico médico!<br>
+            Os resultados são informativos e não devem ser usados para fins clínicos sem a avaliação de um profissional!!!</p>
+            <button onclick="fecharAvisoMedico()">Entendi</button>
+        </div>
+    </div>
+
+    <script>
+      function mostrarAvisoMedico(callback) {
+        const popup = document.getElementById("med-warning-popup");
+        popup.style.display = "flex";
+        popup.querySelector("button").onclick = function () {
+          popup.style.display = "none";
+          if (typeof callback === "function") callback();
+        };
+      }
+
+      function fecharAvisoMedico() {
+        document.getElementById("med-warning-popup").style.display = "none";
+      }
+    </script>
+
 </body>
 <link rel="manifest" href="/static/assets/manifest.json">
 </html>

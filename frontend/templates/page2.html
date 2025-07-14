@@ -223,6 +223,7 @@
             const fftPlotly = document.getElementById("fft-plotly");
 
             if (response.ok) {
+                mostrarAvisoMedico();
                 const data = await response.json();
                 resultDiv.innerHTML = `<p>Jitter (local): ${data.localJitter.toFixed(4)}</p>
                                         <p>Jitter (local, absolute): ${data.localabsoluteJitter.toFixed(4)}</p>
