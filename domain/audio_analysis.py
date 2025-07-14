@@ -32,6 +32,8 @@ class AudioAnalysisResult(BaseModel):
     amplitudes: list
     original_path:str
     analyzed_path:str
+    status: str               # <-- novo campo
+    alertas: list[str]        # <-- novo campo
 
 
 class AudioAnalyzer:
@@ -90,7 +92,9 @@ class AudioAnalyzer:
 
             print("\n \n","Audio input:",self.audio_input)
             print("\n \n","Audio Norm:",self.audio_norm)
-            return AudioAnalysisResult(
+
+            # Construir resultado básico
+            result_dict = dict(
                 jitter=round(jitter, 6),
                 localJitter=round(localJitter, 6),
                 localabsoluteJitter=round(localabsoluteJitter, 6),
@@ -111,6 +115,37 @@ class AudioAnalyzer:
                 original_path=self.audio_input,
                 analyzed_path=self.audio_norm
             )
+
+            # Triagem automática
+            triagem = self.classificar_voz_por_parametros(result_dict, sexo="F")  # ou "M" dependendo do usuário
+
+            # Adiciona status e alertas
+            result_dict["status"] = triagem["status"]
+            result_dict["alertas"] = triagem["alertas"]
+
+            # Retorna objeto completo
+            return AudioAnalysisResult(**result_dict)
+            # return AudioAnalysisResult(
+            #     jitter=round(jitter, 6),
+            #     localJitter=round(localJitter, 6),
+            #     localabsoluteJitter=round(localabsoluteJitter, 6),
+            #     rapJitter=round(rapJitter, 6),
+            #     ppq5Jitter=round(ppq5Jitter, 6),
+            #     ddpJitter=round(ddpJitter, 6),
+            #     shimmer=round(shimmer, 6),
+            #     localShimmer=round(localShimmer, 6),
+            #     localdbShimmer=round(localdbShimmer, 6),
+            #     apq3Shimmer=round(apq3Shimmer, 6),
+            #     apq5Shimmer=round(apq5Shimmer, 6),
+            #     apq11Shimmer=round(apq11Shimmer, 6),
+            #     ddaShimmer=round(ddaShimmer, 6),
+            #     fundamental_frequency=round(f0, 6),
+            #     hnr=round(hnr, 6),
+            #     frequencies=top_freq["frequencies"],
+            #     amplitudes=top_freq["amplitudes"],
+            #     original_path=self.audio_input,
+            #     analyzed_path=self.audio_norm
+            # )
 
         except Exception as e:
             raise ValueError(f"Error analyzing audio: {str(e)}")
@@ -250,3 +285,34 @@ class AudioAnalyzer:
             return original[:index] + '_normalized' + original[index:]  # Insert after dot
         else:
             raise ValueError("The original string does not contain an dot ('.')!!!")
+
+    def classificar_voz_por_parametros(self, parametros: dict, sexo: str = "F") -> dict:
+        CORTES = {
+            "jitter_ppq5_percent": 0.840,
+            "shimmer_apq3_percent": 3.000,
+            "shimmer_apq11_percent": 3.070,
+            "hnr_db": 12.0,
+            "f0_min": {"M": 85, "F": 165},
+            "f0_max": {"M": 155, "F": 255}
+        }
+
+        alertas = []
+
+        # if parametros["fundamental_frequency"] < CORTES["f0_min"][sexo] or parametros["fundamental_frequency"] > CORTES["f0_max"][sexo]:
+        #     alertas.append("Frequência fundamental fora da faixa esperada.")
+
+        if parametros["ppq5Jitter"] > CORTES["jitter_ppq5_percent"]:
+            alertas.append(f'Jitter (ppq5) elevado (possível instabilidade na frequência)! \n Seu resultado deu {parametros["ppq5Jitter"]}% e deveria estar abaixo de {CORTES["jitter_ppq5_percent"]}% \n Procure um especialista!')
+
+        if parametros["apq3Shimmer"] > CORTES["shimmer_apq3_percent"]:
+            alertas.append(f'Shimmer (apq3) elevado (possível instabilidade na amplitude)! \n Seu resultado deu {parametros["apq3Shimmer"]}% e deveria estar abaixo de {CORTES["shimmer_apq3_percent"]}% \n Procure um especialista!')
+
+        if parametros["apq11Shimmer"] > CORTES["shimmer_apq11_percent"]:
+            alertas.append(f'Shimmer (apq11) elevado (possível instabilidade na amplitude)! \n Seu resultado deu {parametros["apq11Shimmer"]}% e deveria estar abaixo de {CORTES["shimmer_apq11_percent"]}% \n Procure um especialista!')
+
+        if parametros["hnr"] < CORTES["hnr_db"]:
+            alertas.append(f'HNR baixo (possível ruído ou soprosidade na voz)!  \n Seu resultado deu {parametros["hnr"]}% e deveria estar acima de {CORTES["hnr_db"]}% \n Procure um especialista!')
+
+        status = "possível patologia" if alertas else "voz saudável"
+
+        return {"status": status, "alertas": alertas}

@@ -225,19 +225,33 @@
             if (response.ok) {
                 mostrarAvisoMedico();
                 const data = await response.json();
-                resultDiv.innerHTML = `<p>Jitter (local): ${data.localJitter.toFixed(4)}</p>
-                                        <p>Jitter (local, absolute): ${data.localabsoluteJitter.toFixed(4)}</p>
-                                        <p>Jitter (rap): ${data.rapJitter.toFixed(4)}</p>
-                                        <p>Jitter (ppq5): ${data.ppq5Jitter.toFixed(4)}</p>
-                                        <p>Jitter (ddp): ${data.ddpJitter.toFixed(4)}</p>
-                                        <p>Shimmer (local): ${data.localShimmer.toFixed(4)}</p>
-                                        <p>Shimmer (local, dB): ${data.localdbShimmer.toFixed(4)}</p>
-                                        <p>Shimmer (apq3): ${data.apq3Shimmer.toFixed(4)}</p>
-                                        <p>Shimmer (apq5): ${data.apq5Shimmer.toFixed(4)}</p>
-                                        <p>Shimmer (apq11): ${data.apq11Shimmer.toFixed(4)}</p>
-                                        <p>Shimmer (dda): ${data.ddaShimmer.toFixed(4)}</p>
-                                        <p>Fundamental Frequency: ${data.fundamental_frequency.toFixed(4)}</p>
-                                        <p>HNR: ${data.hnr.toFixed(4)}</p>`;
+
+                resultDiv.innerHTML = ""; // limpa conteúdo anterior
+                const statusElement = document.createElement("h3");
+                statusElement.textContent = `Status da Voz: ${data.status}`;
+                resultDiv.appendChild(statusElement);
+
+                const ul = document.createElement("ul");
+                data.alertas.forEach(alerta => {
+                  const li = document.createElement("li");
+                  li.textContent = alerta;
+                  ul.appendChild(li);
+                });
+                resultDiv.appendChild(ul);
+
+<!--                resultDiv.innerHTML = `<p>Jitter (local): ${data.localJitter.toFixed(4)}</p>-->
+<!--                                        <p>Jitter (local, absolute): ${data.localabsoluteJitter.toFixed(4)}</p>-->
+<!--                                        <p>Jitter (rap): ${data.rapJitter.toFixed(4)}</p>-->
+<!--                                        <p>Jitter (ppq5): ${data.ppq5Jitter.toFixed(4)}</p>-->
+<!--                                        <p>Jitter (ddp): ${data.ddpJitter.toFixed(4)}</p>-->
+<!--                                        <p>Shimmer (local): ${data.localShimmer.toFixed(4)}</p>-->
+<!--                                        <p>Shimmer (local, dB): ${data.localdbShimmer.toFixed(4)}</p>-->
+<!--                                        <p>Shimmer (apq3): ${data.apq3Shimmer.toFixed(4)}</p>-->
+<!--                                        <p>Shimmer (apq5): ${data.apq5Shimmer.toFixed(4)}</p>-->
+<!--                                        <p>Shimmer (apq11): ${data.apq11Shimmer.toFixed(4)}</p>-->
+<!--                                        <p>Shimmer (dda): ${data.ddaShimmer.toFixed(4)}</p>-->
+<!--                                        <p>Fundamental Frequency: ${data.fundamental_frequency.toFixed(4)}</p>-->
+<!--                                        <p>HNR: ${data.hnr.toFixed(4)}</p>`;-->
 <!--                fftPlot.style.display = "block";-->
                 fftPlotly.style.display = "block";
 
